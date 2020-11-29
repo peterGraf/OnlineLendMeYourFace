@@ -5,26 +5,26 @@ Copyright (C) 2020, Tamiko Thiel and Peter Graf - All Rights Reserved
 
    This file is part of Online Lend Me Your Face.
    The online handling of Lend Me Your Face is free software.
-   
-    This cgi-program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
 
-    Arpoise is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This cgi-program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with Arpoise.  If not, see <https://www.gnu.org/licenses/>.
-    
+	Arpoise is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Arpoise.  If not, see <https://www.gnu.org/licenses/>.
+
 For more information on
 
 Tamiko Thiel, see <https://www.TamikoThiel.com/>
 Peter Graf, see <https://www.mission-base.com/peter/>
 LendMeYourFace, see <https://www.tamikothiel.com/lendmeyourface/>
-   
+
 */
 /*
 * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
@@ -108,20 +108,15 @@ static void traceDuration()
 
 static void printTemplate(char* fileName, char* contentType)
 {
-	char* templateDirectoryPath = getRequiredConfigValue("TemplateDirectoryPath");
 	traceDuration();
-	pblCgiPrint(templateDirectoryPath, fileName, contentType);
+	pblCgiPrint(getRequiredConfigValue("TemplateDirectoryPath"), fileName, contentType);
 }
 
 static int stringEndsWith(char* string, char* end)
 {
 	int length = strlen(string);
 	int endLength = strlen(end);
-	if (length < endLength)
-	{
-		return 0;
-	}
-	return !strcmp(end, string + length - endLength);
+	return length >= endLength && !strcmp(end, string + length - endLength);
 }
 
 static int fileNameMatches(char* name, char* pattern, char** extensions)
@@ -130,28 +125,19 @@ static int fileNameMatches(char* name, char* pattern, char** extensions)
 	{
 		return 0;
 	}
-	if (pattern && *pattern)
+	if (pattern && *pattern && !strstr(name, pattern))
 	{
-		if (!strstr(name, pattern))
-		{
-			return 0;
-		}
+		return 0;
 	}
 	if (extensions)
 	{
-		int i = -1;
-		while (++i >= 0)
+		char* extension;
+		for (int i = 0; (extension = extensions[i]) && *extension; i++)
 		{
-			char* extension = extensions[i];
-			if (!extension || !*extension)
+			if (stringEndsWith(name, extension))
 			{
-				break;
+				return 1;
 			}
-			if (!stringEndsWith(name, extension))
-			{
-				continue;
-			}
-			return 1;
 		}
 		return 0;
 	}
@@ -223,6 +209,11 @@ static PblList* listFilesInDirectory(char* path, char* pattern, char** extension
 static char* getFileName(char* key)
 {
 	char* tag = "GetFileName";
+	if (!cookie || strlen(cookie) != cookieLength)
+	{
+		pblCgiExitOnError("%s: This method needs a valid cookie, the invalid cookie is '%s'", tag, cookie ? cookie : "NULL");
+		return NULL;
+	}
 	char* fileName = pblCgiQueryValue(key);
 	if (!fileName || !*fileName)
 	{
@@ -241,6 +232,10 @@ static char* getFileName(char* key)
 	if (strlen(fileName) != cookieLength)
 	{
 		pblCgiExitOnError("%s: Key '%s', expected %d bytes, received '%s', length %d", tag, key, cookieLength, fileName, strlen(fileName));
+	}
+	if (strcmp(cookie + timeStringLength, fileName + timeStringLength))
+	{
+		pblCgiExitOnError("%s: The file name '%s' is not valid for you.", tag, fileName);
 	}
 	return fileName;
 }
@@ -291,9 +286,9 @@ static char* nextPrivateVideoUrl()
 	{
 		return NULL;
 	}
-	if (!cookie || !*cookie)
+	if (!cookie || strlen(cookie) != cookieLength)
 	{
-		PBL_CGI_TRACE("<<<< %s: No cookie", tag);
+		PBL_CGI_TRACE("<<<< %s: Invalid cookie '%s'", tag, cookie ? cookie : "NULL");
 		return NULL;
 	}
 
@@ -324,12 +319,11 @@ static char* nextPrivateVideoUrl()
 		char* txtFile = pblCgiStrReplace(video, ".mp4", ".txt");
 		//PBL_CGI_TRACE(":::: %s, txtFile %s", tag, txtFile);
 
-		if (!pblCollectionContains(txtFiles, txtFile))
+		if (pblCollectionContains(txtFiles, txtFile))
 		{
-			continue;
+			url = pblCgiStrCat(outputVideosUrl, video);
+			break;
 		}
-		url = pblCgiStrCat(outputVideosUrl, video);
-		break;
 	}
 
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url ? url : "");
@@ -462,10 +456,7 @@ static int convertFile(char* filePath, char* targetPath)
 	// Crop the image to a square if it is not already almost a square
 	//
 	int difference = imageWidth - imageHeight;
-	if (difference < 0)
-	{
-		difference = -difference;
-	}
+	difference = difference < 0 ? -difference : difference;
 
 	int almostIsSquare = difference < 5;
 	unsigned char* squareData = NULL;
@@ -477,10 +468,9 @@ static int convertFile(char* filePath, char* targetPath)
 		{
 			squareHeight = imageWidth;
 			int size = squareHeight * squareWidth * bytesPerPixel;
-			unsigned char* to = squareData = pbl_malloc(tag, size);
+			unsigned char* to = squareData = (unsigned char*)pblCgiMalloc(tag, size);
 			if (!squareData)
 			{
-				pblCgiExitOnError("%s: pbl_errno = %d, message='%s'\n", tag, pbl_errno, pbl_errstr);
 				return -1;
 			}
 			unsigned char* from = data + bytesPerPixel * (difference / 2) * imageWidth;
@@ -490,10 +480,9 @@ static int convertFile(char* filePath, char* targetPath)
 		{
 			squareWidth = imageHeight;
 			int size = squareHeight * squareWidth * bytesPerPixel;
-			unsigned char* to = squareData = pbl_malloc(tag, size);
+			unsigned char* to = squareData = (unsigned char*)pblCgiMalloc(tag, size);
 			if (!squareData)
 			{
-				pblCgiExitOnError("%s: pbl_errno = %d, message='%s'\n", tag, pbl_errno, pbl_errstr);
 				return -1;
 			}
 
@@ -513,10 +502,9 @@ static int convertFile(char* filePath, char* targetPath)
 
 	// Resize the square to targetWidth * targetWidth pixels
 	//
-	unsigned char* resizedData = pbl_malloc(tag, targetWidth * targetWidth * bytesPerPixel);
+	unsigned char* resizedData = (unsigned char*)pblCgiMalloc(tag, targetWidth * targetWidth * bytesPerPixel);
 	if (!resizedData)
 	{
-		pblCgiExitOnError("%s: pbl_errno = %d, message='%s'\n", tag, pbl_errno, pbl_errstr);
 		return -1;
 	}
 
@@ -596,21 +584,14 @@ static int deleteImage()
 	}
 
 	char* extensions[] = { ".png",  ".jpg", (char*)NULL };
-	char* directories[3] =
-	{
-		getRequiredConfigValue("UploadedPicturesPath"),
-		getRequiredConfigValue("ConvertedPicturesPath"),
-		(char*)NULL
-	};
+	char* directories[3] = { getRequiredConfigValue("UploadedPicturesPath"), getRequiredConfigValue("ConvertedPicturesPath"),(char*)NULL };
 	for (int i = 0; directories[i]; i++)
 	{
 		char* directory = directories[i];
-
 		PblList* files = listFilesInDirectory(directory, imageFileName, extensions);
 		if (files && !pblListIsEmpty(files))
 		{
 			int nFiles = pblListSize(files);
-
 			for (int j = 0; j < nFiles; j++)
 			{
 				char* filePath = pblCgiSprintf("%s%s", directory, (char*)pblListGet(files, j));
@@ -666,9 +647,9 @@ static int uploadImage()
 	char* tag = "UploadImage";
 	PBL_CGI_TRACE(">>> %s", tag);
 
-	if (!cookie || !*cookie)
+	if (!cookie || strlen(cookie) != cookieLength)
 	{
-		pblCgiExitOnError("%s: This method cannot be called without a cockie.", tag);
+		pblCgiExitOnError("%s: This method needs a valid cookie, the invalid cookie is '%s'", tag, cookie ? cookie : "NULL");
 		return -1;
 	}
 
@@ -949,7 +930,7 @@ static int lendMeYourFace(int argc, char* argv[])
 
 	PBL_CGI_TRACE("<< %s: rc %d", tag, rc);
 	return rc;
-}
+	}
 
 int main(int argc, char* argv[])
 {

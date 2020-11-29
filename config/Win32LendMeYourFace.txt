@@ -3,17 +3,24 @@
 
 ## Traces are only written if the file exists, the file needs to be writable by the cgi program
 #
-TraceFilePath           D:/Temp/LendMeYourFace.txt
-
+TraceFilePath               D:/Temp/LendMeYourFace.txt
+  
 ## Directory paths
 #
-UploadDirectoryPath         D:/Temp/
 TemplateDirectoryPath       C:\Users\user\source\repos\LendMeYourFace\templates/
 
-GeneratedDirectoryPath      C:\Users\user\source\repos\LendMeYourFace\generated\
-DrivingDirectoryPath        C:\Users\user\source\repos\LendMeYourFace\drivingVideos/
+PauseFilePath               C:\Users\user\source\repos\LendMeYourFace\online/PAUSE
 
+PublicVideosPath            C:\Users\user\source\repos\LendMeYourFace\online/publicVideos/
+PublicVideosUrl             https://www.tamikothiel.com/lendmeyourface/online/publicVideos/
 
-GeneratedDirectoryUrl       https://www.tamikothiel.com/lendmeyourface/online/generated/
-DrivingDirectoryUrl         https://www.tamikothiel.com/lendmeyourface/online/drivingVideos/
+UploadedPicturesPath        C:\Users\user\source\repos\LendMeYourFace\online/uploadedPictures/
+
+ConvertedPicturesPath       C:\Users\user\source\repos\LendMeYourFace\online/convertedPictures/
+ConvertedPicturesUrl        https://www.tamikothiel.com/lendmeyourface/online/convertedPictures/
+
+InputPicturesPath           C:\Users\user\source\repos\LendMeYourFace\online/inputPictures/
+
+OutputVideosPath            C:\Users\user\source\repos\LendMeYourFace\online/outputVideos/
+OutputVideosUrl             https://www.tamikothiel.com/lendmeyourface/online/outputVideos/
 

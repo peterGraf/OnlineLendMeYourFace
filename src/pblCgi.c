@@ -75,7 +75,7 @@ int pblCgiContentLength = -1;
 char* pblCgiCookieKey = PBL_CGI_COOKIE;
 char* pblCgiCookieTag = PBL_CGI_COOKIE "=";
 
-static char* pblCgiMalloc(char* tag, size_t size)
+char* pblCgiMalloc(char* tag, size_t size)
 {
 	char* result = pbl_malloc(tag, size);
 	if (!result)
