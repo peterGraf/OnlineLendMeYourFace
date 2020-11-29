@@ -1,0 +1,27 @@
+## LendMeYourFace.txt - Configuration file for LendMeYourFace service
+#
+
+## Traces are only written if the file exists, the file needs to be writable by the cgi program
+#
+TraceFilePath               /LendMeYourFace/LendMeYourFace.txt
+
+## Directory paths
+#
+TemplateDirectoryPath       /www/mission-base.com/templates/LendMeYourFace/
+
+PauseFilePath               /www/mission-base.com/html/tamiko/lendmeyourface/online/PAUSE
+
+PublicVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online/publicVideos/
+PublicVideosUrl             https://www.tamikothiel.com/lendmeyourface/online/publicVideos/
+
+UploadedPicturesPath        /www/mission-base.com/html/tamiko/lendmeyourface/online/uploadedPictures/
+
+ConvertedPicturesPath       /www/mission-base.com/html/tamiko/lendmeyourface/online/convertedPictures/
+ConvertedPicturesUrl        https://www.tamikothiel.com/lendmeyourface/online/convertedPictures/
+
+InputPicturesPath           /www/mission-base.com/html/tamiko/lendmeyourface/online/inputPictures/
+
+OutputVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online/outputVideos/
+OutputVideosUrl             https://www.tamikothiel.com/lendmeyourface/online/outputVideos/
+
+

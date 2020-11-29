@@ -1,0 +1,19 @@
+## LendMeYourFace.txt - Configuration file for LendMeYourFace service
+#
+
+## Traces are only written if the file exists, the file needs to be writable by the cgi program
+#
+TraceFilePath           D:/Temp/LendMeYourFace.txt
+
+## Directory paths
+#
+UploadDirectoryPath         D:/Temp/
+TemplateDirectoryPath       C:\Users\user\source\repos\LendMeYourFace\templates/
+
+GeneratedDirectoryPath      C:\Users\user\source\repos\LendMeYourFace\generated\
+DrivingDirectoryPath        C:\Users\user\source\repos\LendMeYourFace\drivingVideos/
+
+
+GeneratedDirectoryUrl       https://www.tamikothiel.com/lendmeyourface/online/generated/
+DrivingDirectoryUrl         https://www.tamikothiel.com/lendmeyourface/online/drivingVideos/
+

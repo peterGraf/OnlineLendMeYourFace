@@ -1,0 +1,21 @@
+<!-- 
+ Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
+ -->
+ <!--#INCLUDE header.html-->
+
+<h2>Hello, welcome to Lend Me Your Face</h2>
+
+Lend Me Your Face needs to set a cookie, do you want to allow this?
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>">
+  <input type="submit" value="No">
+</form>
+
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="action" name="action" value="setCookie">
+  <input type="submit" value="Yes">
+</form>
+
+<!--#INCLUDE footer.html-->

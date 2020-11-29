@@ -1,0 +1,34 @@
+<!-- 
+ Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
+ -->
+ <!--#INCLUDE header.html-->
+
+<h2>Hello, welcome to Lend Me Your Face</h2>
+
+<p>
+<h3>Do you want to use this image?</h3>
+
+<img src="<?imageUrl>" height="512" width="512">
+
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
+  <input type="hidden" id="action" name="action" value="deleteImage">
+  <input type="submit" value="Upload Another Image">
+</form>
+
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
+  <input type="hidden" id="action" name="action" value="rotateImage">
+  <input type="submit" value="Rotate 90 deg Clockwise">
+</form>
+
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
+  <input type="hidden" id="action" name="action" value="useImage">
+  <input type="submit" value="Use the Image">
+</form>
+
+<!--#INCLUDE footer.html-->

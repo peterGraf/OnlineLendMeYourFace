@@ -1,0 +1,57 @@
+<!-- 
+ Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
+ -->
+ <!--#INCLUDE header.html-->
+
+<h2>Public Videos of Lend Me Your Face</h2>
+
+<button onclick="playVideo()" type="button">Play Video</button>
+
+<table>
+<tr>
+<td>
+<video id="video1" width="1024" height="512">
+  <source src="<?Video1>" type=video/mp4>
+</video>
+</td>
+</tr>
+</table>
+
+<script>
+
+var video1 = document.getElementById("video1");
+
+video1.oncanplaythrough = function()
+{
+  video1.play();
+};
+
+video1.onended = function()
+{
+  window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi";
+};
+
+function playVideo() { 
+  video1.play();
+} 
+
+function pauseVid() { 
+  video1.pause();
+} 
+</script> 
+
+<!--#IFDEF HasPrivateVideo-->
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="action" name="action" value="privateVideo">
+  <input type="submit" value="View my Videos">
+</form>
+<!--#ENDIF HasPrivateVideo-->
+
+<p>
+<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
+  <input type="hidden" id="action" name="action" value="startUpload">
+  <input type="submit" value="Upload my Image">
+</form>
+
+<!--#INCLUDE footer.html-->
