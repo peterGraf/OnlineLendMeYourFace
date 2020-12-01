@@ -1,6 +1,9 @@
 ## LendMeYourFace.txt - Configuration file for LendMeYourFace service
 #
 
+MaxPictureQueueLength       10
+EstimatedMinutesForRender   2
+
 ## Traces are only written if the file exists, the file needs to be writable by the cgi program
 #
 TraceFilePath               /LendMeYourFace/LendMeYourFace.txt
@@ -16,6 +19,7 @@ PublicVideosUrl             https://www.tamikothiel.com/lendmeyourface/online/pu
 
 UploadedPicturesPath        /www/mission-base.com/html/tamiko/lendmeyourface/online/uploadedPictures/
 
+HandledPicturesPath         /www/mission-base.com/html/tamiko/lendmeyourface/online/handledPictures/
 ConvertedPicturesPath       /www/mission-base.com/html/tamiko/lendmeyourface/online/convertedPictures/
 ConvertedPicturesUrl        https://www.tamikothiel.com/lendmeyourface/online/convertedPictures/
 

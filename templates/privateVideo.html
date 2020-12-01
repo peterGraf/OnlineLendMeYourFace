@@ -6,25 +6,23 @@
 <!--#IFDEF HasPrivateVideo-->
 <h2>Your Videos of Lend Me Your Face</h2>
 <!--#ENDIF HasPrivateVideo-->
+
 <!--#IFNDEF HasPrivateVideo-->
 <h2>Your Videos are Being Prepared</h2>
 <!--#ENDIF HasPrivateVideo-->
 
 <button onclick="playVideo()" type="button">Play Video</button>
+<button onclick="pauseVideo()" type="button">Pause Video</button>
 
-<table>
-<tr>
-<td>
+<p>
 <video id="video1" width="1024" height="512">
   <source src="<?Video1>" type=video/mp4>
 </video>
-</td>
-</tr>
-</table>
 
 <script>
-
 var video1 = document.getElementById("video1");
+var doDeleteVideo = false;
+var doDelete = false;
 
 video1.oncanplaythrough = function()
 {
@@ -33,16 +31,47 @@ video1.oncanplaythrough = function()
 
 video1.onended = function()
 {
-  window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=privateVideo";
+  if (doDeleteVideo)
+  {
+    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteVideo&video=<?VideoName1>";
+  }
+  else if (doDelete)
+  {
+    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteData";
+  }
+  else
+  {
+    doDeleteVideo = true;
+    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=privateVideo";
+  }
 };
 
 function playVideo() { 
   video1.play();
 } 
 
-function pauseVid() { 
+function pauseVideo() { 
   video1.pause();
-} 
+}
+
+function confirmVideoDelete() {
+  pauseVideo();
+  if(confirm("Do you really want to delete this video from Lend Me Your Face?"))
+  {
+    doDeleteVideo = true;
+    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteVideo&video=<?VideoName1>";
+  }
+}
+
+function confirmDelete() {
+  pauseVideo();
+  if(confirm("Do you really want to delete all your data from Lend Me Your Face?"))
+  {
+    doDelete = true;
+    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteData";
+  }
+}
+
 </script> 
 
 <p>
@@ -56,5 +85,15 @@ function pauseVid() {
   <input type="hidden" id="action" name="action" value="startUpload">
   <input type="submit" value="Upload an Image">
 </form>
+
+<!--#IFDEF HasPrivateVideo-->
+<p>
+<button onclick="confirmVideoDelete()">Delete this Video</button>
+<!--#ENDIF HasPrivateVideo-->
+
+<!--#IFDEF HasCookie-->
+<p>
+<button onclick="confirmDelete()">Delete my Data</button>
+<!--#ENDIF HasCookie-->
 
 <!--#INCLUDE footer.html-->

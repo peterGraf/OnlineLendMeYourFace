@@ -1,9 +1,9 @@
 /*
-LendMeYourFace.c - Main file for Online Lend Me Your Face - a cgi-bin executable.
+LendMeYourFace.c - Main file for online handling of Lend Me Your Face - a cgi-bin executable.
 
 Copyright (C) 2020, Tamiko Thiel and Peter Graf - All Rights Reserved
 
-   This file is part of Online Lend Me Your Face.
+   This file is part of the online handling of Lend Me Your Face.
    The online handling of Lend Me Your Face is free software.
 
 	This cgi-program is free software: you can redistribute it and/or modify
@@ -11,13 +11,13 @@ Copyright (C) 2020, Tamiko Thiel and Peter Graf - All Rights Reserved
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Arpoise is distributed in the hope that it will be useful,
+	This file is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Arpoise.  If not, see <https://www.gnu.org/licenses/>.
+	along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
 For more information on
 
@@ -81,8 +81,8 @@ char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.5 2020/11/12 20:21:45 pet
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
-static int timeStringLength = 12;
-static int cookieLength = 36;
+static const unsigned int timeStringLength = 12;
+static const unsigned int cookieLength = 36;
 static char* cookie;
 
 static char* getRequiredConfigValue(char* key)
@@ -119,7 +119,7 @@ static int stringEndsWith(char* string, char* end)
 	return length >= endLength && !strcmp(end, string + length - endLength);
 }
 
-static int fileNameMatches(char* name, char* pattern, char** extensions)
+static int nameMatches(char* name, char* pattern, char** extensions)
 {
 	if (!name || !*name)
 	{
@@ -147,6 +147,8 @@ static int fileNameMatches(char* name, char* pattern, char** extensions)
 static PblList* listFilesInDirectory(char* path, char* pattern, char** extensions)
 {
 	char* tag = "ListDirectory";
+	PBL_CGI_TRACE(">>>> %s: '%s', pattern '%s'", tag, path ? path : "", pattern ? pattern : "");
+
 	PblList* list = pblListNewArrayList();
 	if (!list)
 	{
@@ -171,7 +173,7 @@ static PblList* listFilesInDirectory(char* path, char* pattern, char** extension
 		char buffer[1024];
 		sprintf(buffer, "%ws", findFileData.cFileName);
 
-		if (fileNameMatches(buffer, pattern, extensions))
+		if (nameMatches(buffer, pattern, extensions))
 		{
 			if (pblListAdd(list, pblCgiStrDup(buffer)) < 0)
 			{
@@ -192,7 +194,7 @@ static PblList* listFilesInDirectory(char* path, char* pattern, char** extension
 	struct dirent* ent;
 	while ((ent = readdir(dir)) != NULL)
 	{
-		if (fileNameMatches(ent->d_name, pattern, extensions))
+		if (nameMatches(ent->d_name, pattern, extensions))
 		{
 			if (pblListAdd(list, pblCgiStrDup(ent->d_name)) < 0)
 			{
@@ -203,6 +205,7 @@ static PblList* listFilesInDirectory(char* path, char* pattern, char** extension
 	closedir(dir);
 #endif
 
+	PBL_CGI_TRACE("<<<< %s: %d", tag, pblListSize(list));
 	return list;
 }
 
@@ -245,27 +248,16 @@ static char* nextPublicVideoUrl()
 	char* tag = "NextPublicVideoUrl";
 	PBL_CGI_TRACE(">>>> %s", tag);
 
-	char* publicVideosPath = getRequiredConfigValue("PublicVideosPath");
-	if (!publicVideosPath)
-	{
-		return NULL;
-	}
-	char* publicVideosUrl = getRequiredConfigValue("PublicVideosUrl");
-	if (!publicVideosUrl)
-	{
-		return NULL;
-	}
-
 	char* extensions[] = { ".mp4", (char*)NULL };
-	PblList* videos = listFilesInDirectory(publicVideosPath, NULL, extensions);
+	PblList* videos = listFilesInDirectory(getRequiredConfigValue("PublicVideosPath"), NULL, extensions);
 	if (!videos || pblListIsEmpty(videos))
 	{
-		pblCgiExitOnError("%s: There are no videos in directory '%s'.\n", tag, publicVideosPath);
+		pblCgiExitOnError("%s: There are no videos in directory '%s'.\n", tag, getRequiredConfigValue("PublicVideosPath"));
 		return NULL;
 	}
 	unsigned int nVideos = pblListSize(videos);
 	char* video = pblListGet(videos, rand() % nVideos);
-	char* url = pblCgiStrCat(publicVideosUrl, video);
+	char* url = pblCgiStrCat(getRequiredConfigValue("PublicVideosUrl"), video);
 
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url);
 	return url;
@@ -276,22 +268,13 @@ static char* nextPrivateVideoUrl()
 	char* tag = "NextPrivateVideoUrl";
 	PBL_CGI_TRACE(">>>> %s", tag);
 
-	char* outputVideosPath = getRequiredConfigValue("OutputVideosPath");
-	if (!outputVideosPath)
-	{
-		return NULL;
-	}
-	char* outputVideosUrl = getRequiredConfigValue("OutputVideosUrl");
-	if (!outputVideosUrl)
-	{
-		return NULL;
-	}
 	if (!cookie || strlen(cookie) != cookieLength)
 	{
 		PBL_CGI_TRACE("<<<< %s: Invalid cookie '%s'", tag, cookie ? cookie : "NULL");
 		return NULL;
 	}
 
+	char* outputVideosPath = getRequiredConfigValue("OutputVideosPath");
 	char* txtExtensions[] = { ".txt", (char*)NULL };
 	PblList* txtFiles = listFilesInDirectory(outputVideosPath, cookie + timeStringLength, txtExtensions);
 	if (!txtFiles || pblListIsEmpty(txtFiles))
@@ -321,11 +304,11 @@ static char* nextPrivateVideoUrl()
 
 		if (pblCollectionContains(txtFiles, txtFile))
 		{
-			url = pblCgiStrCat(outputVideosUrl, video);
+			pblCgiSetValue("VideoName1", video);
+			url = pblCgiStrCat(getRequiredConfigValue("OutputVideosUrl"), video);
 			break;
 		}
 	}
-
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url ? url : "");
 	return url;
 }
@@ -367,6 +350,64 @@ static int privateVideo()
 	printTemplate("privateVideo.html", "text/html");
 	PBL_CGI_TRACE("<<< %s: VideoUrl '%s'", tag, videoUrl);
 	return 0;
+}
+
+static void removeFilesFromDirectories(char** directories, char* pattern, char** extensions)
+{
+	char* tag = "RemoveFilesFromDirectories";
+	PBL_CGI_TRACE(">>>> %s: %s", tag, pattern ? pattern : NULL);
+
+	if (!pattern || !*pattern)
+	{
+		pblCgiExitOnError("%s: Parameter 'pattern' cannot be empty", tag);
+		return;
+	}
+
+	for (int i = 0; directories[i]; i++)
+	{
+		char* directory = directories[i];
+		PblList* files = listFilesInDirectory(directory, pattern, extensions);
+		if (files)
+		{
+			int nFiles = pblListSize(files);
+			for (int j = 0; j < nFiles; j++)
+			{
+				char* filePath = pblCgiSprintf("%s%s", directory, (char*)pblListGet(files, j));
+				int rc = remove(filePath);
+				PBL_CGI_TRACE(":::: %s: removed '%s', rc %d", tag, filePath, rc);
+			}
+		}
+	}
+	PBL_CGI_TRACE("<<<< %s: ", tag);
+	return;
+}
+
+static int deleteVideo()
+{
+	char* tag = "DeleteVideo";
+	PBL_CGI_TRACE(">>> %s", tag);
+
+	if (!cookie || strlen(cookie) != cookieLength)
+	{
+		pblCgiExitOnError("%s: This method needs a valid cookie, the invalid cookie is '%s'", tag, cookie ? cookie : "NULL");
+		return -1;
+	}
+
+	char* videoName = pblCgiQueryValue("video");
+	if (videoName && strlen(videoName) > cookieLength
+		&& !strncmp(videoName + timeStringLength, cookie + timeStringLength, cookieLength - timeStringLength))
+	{
+		char* extensions[] = { ".txt", ".mp4", (char*)NULL };
+		char* directories[2] = { getRequiredConfigValue("OutputVideosPath"), (char*)NULL };
+
+		videoName = pblCgiStrReplace(videoName, ".mp4", "");
+		removeFilesFromDirectories(directories, videoName, extensions);
+	}
+
+	char* videoUrl = nextPrivateVideoUrl();
+	int hasPrivateVideo = videoUrl && *videoUrl ? 1 : 0;
+	PBL_CGI_TRACE("<<< %s: hasPrivateVideo %d", tag, hasPrivateVideo);
+	return hasPrivateVideo ? privateVideo() : nextPublicVideo();
 }
 
 static int rotateFile(char* filePath)
@@ -534,42 +575,65 @@ static int useImage()
 	char* tag = "UseImage";
 	PBL_CGI_TRACE(">>> %s", tag);
 
-	char* convertedPicturesPath = getRequiredConfigValue("ConvertedPicturesPath");
-	if (!convertedPicturesPath)
-	{
-		return -1;
-	}
-	char* inputPicturesPath = getRequiredConfigValue("InputPicturesPath");
-	if (!inputPicturesPath)
-	{
-		return -1;
-	}
-	char* pauseFilePath = getRequiredConfigValue("PauseFilePath");
-	if (!pauseFilePath)
-	{
-		return -1;
-	}
-
-	char* imageFileName = getFileName("imageFileName");
-	if (!imageFileName)
-	{
-		return -1;
-	}
-
-	char* imageName = pblCgiSprintf("%s.png", imageFileName);
-	char* imagePath = pblCgiSprintf("%s/%s", convertedPicturesPath, imageName);
-	char* newPath = pblCgiSprintf("%s/%s", inputPicturesPath, imageName);
+	char* imageName = pblCgiSprintf("%s.png", getFileName("imageFileName"));
+	char* imagePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesPath"), imageName);
+	char* newPath = pblCgiSprintf("%s/%s", getRequiredConfigValue("InputPicturesPath"), imageName);
 
 	if (rename(imagePath, newPath))
 	{
 		pblCgiExitOnError("%s: Failed to rename file '%s' to '%s'", tag, imagePath, newPath);
 		return -1;
 	}
-	remove(pauseFilePath);
+	remove(getRequiredConfigValue("PauseFilePath"));
 
 	PBL_CGI_TRACE("<<< %s: ", tag);
 
 	return privateVideo();
+}
+
+static int deleteData()
+{
+	char* tag = "DeleteData";
+	PBL_CGI_TRACE(">>> %s", tag);
+
+	if (!cookie || strlen(cookie) != cookieLength)
+	{
+		pblCgiExitOnError("%s: This method needs a valid cookie, the invalid cookie is '%s'", tag, cookie ? cookie : "NULL");
+		return 0;
+	}
+	char* extensions[] = { ".mp4", ".png",  ".jpg",  ".txt", (char*)NULL };
+	char* directories[6] =
+	{
+		getRequiredConfigValue("UploadedPicturesPath"),
+		getRequiredConfigValue("ConvertedPicturesPath"),
+		getRequiredConfigValue("InputPicturesPath"),
+		getRequiredConfigValue("HandledPicturesPath"),
+		getRequiredConfigValue("OutputVideosPath"),
+		(char*)NULL
+	};
+	removeFilesFromDirectories(directories, cookie + timeStringLength, extensions);
+
+	PBL_CGI_TRACE("<<< %s: ", tag);
+	return 0;
+}
+
+static int removeImage(char* pattern)
+{
+	char* tag = "RemoveImage";
+	PBL_CGI_TRACE(">>> %s: '%s'", tag, pattern ? pattern : "");
+
+	char* extensions[] = { ".png",  ".jpg",  ".txt", (char*)NULL };
+	char* directories[5] =
+	{
+		getRequiredConfigValue("UploadedPicturesPath"),
+		getRequiredConfigValue("ConvertedPicturesPath"),
+		getRequiredConfigValue("HandledPicturesPath"),
+		getRequiredConfigValue("InputPicturesPath"),
+		(char*)NULL
+	};
+	removeFilesFromDirectories(directories, pattern, extensions);
+	PBL_CGI_TRACE("<<< %s: ", tag);
+	return 0;
 }
 
 static int deleteImage()
@@ -577,29 +641,8 @@ static int deleteImage()
 	char* tag = "DeleteImage";
 	PBL_CGI_TRACE(">>> %s", tag);
 
-	char* imageFileName = getFileName("imageFileName");
-	if (!imageFileName)
-	{
-		return -1;
-	}
+	removeImage(getFileName("imageFileName"));
 
-	char* extensions[] = { ".png",  ".jpg", (char*)NULL };
-	char* directories[3] = { getRequiredConfigValue("UploadedPicturesPath"), getRequiredConfigValue("ConvertedPicturesPath"),(char*)NULL };
-	for (int i = 0; directories[i]; i++)
-	{
-		char* directory = directories[i];
-		PblList* files = listFilesInDirectory(directory, imageFileName, extensions);
-		if (files && !pblListIsEmpty(files))
-		{
-			int nFiles = pblListSize(files);
-			for (int j = 0; j < nFiles; j++)
-			{
-				char* filePath = pblCgiSprintf("%s%s", directory, (char*)pblListGet(files, j));
-				int rc = remove(filePath);
-				PBL_CGI_TRACE("::: %s: removed '%s', rc %d", tag, filePath, rc);
-			}
-		}
-	}
 	printTemplate("startUpload.html", "text/html");
 	PBL_CGI_TRACE("<<< %s: ", tag);
 	return 0;
@@ -610,17 +653,6 @@ static int rotateImage()
 	char* tag = "RotateImage";
 	PBL_CGI_TRACE(">>> %s", tag);
 
-	char* convertedPicturesPath = getRequiredConfigValue("ConvertedPicturesPath");
-	if (!convertedPicturesPath)
-	{
-		return -1;
-	}
-	char* convertedPicturesUrl = getRequiredConfigValue("ConvertedPicturesUrl");
-	if (!convertedPicturesUrl)
-	{
-		return -1;
-	}
-
 	char* imageFileName = getFileName("imageFileName");
 	if (!imageFileName)
 	{
@@ -628,8 +660,8 @@ static int rotateImage()
 	}
 
 	char* imageName = pblCgiSprintf("%s.png", imageFileName);
-	char* imagePath = pblCgiSprintf("%s/%s", convertedPicturesPath, imageName);
-	char* imageUrl = pblCgiSprintf("%s/%s", convertedPicturesUrl, imageName);
+	char* imagePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesPath"), imageName);
+	char* imageUrl = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesUrl"), imageName);
 
 	rotateFile(imagePath);
 
@@ -650,22 +682,6 @@ static int uploadImage()
 	if (!cookie || strlen(cookie) != cookieLength)
 	{
 		pblCgiExitOnError("%s: This method needs a valid cookie, the invalid cookie is '%s'", tag, cookie ? cookie : "NULL");
-		return -1;
-	}
-
-	char* uploadedPicturesPath = getRequiredConfigValue("UploadedPicturesPath");
-	if (!uploadedPicturesPath)
-	{
-		return -1;
-	}
-	char* convertedPicturesPath = getRequiredConfigValue("ConvertedPicturesPath");
-	if (!convertedPicturesPath)
-	{
-		return -1;
-	}
-	char* convertedPicturesUrl = getRequiredConfigValue("ConvertedPicturesUrl");
-	if (!convertedPicturesUrl)
-	{
 		return -1;
 	}
 
@@ -772,7 +788,7 @@ static int uploadImage()
 	char* timeString = pblCgiStrFromTimeAndFormat(now, "%02d%02d%02d%02d%02d%02d");
 
 	char* uploadFileName = pblCgiSprintf("%s%s.%s", timeString, cookie + timeStringLength, extension);
-	char* uploadFilePath = pblCgiSprintf("%s/%s", uploadedPicturesPath, uploadFileName);
+	char* uploadFilePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("UploadedPicturesPath"), uploadFileName);
 
 	FILE* stream;
 	if (!(stream = pblCgiFopen(uploadFilePath, "w")))
@@ -790,8 +806,8 @@ static int uploadImage()
 
 	char* imageFileName = pblCgiSprintf("%s%s", timeString, cookie + timeStringLength);
 	char* imageName = pblCgiSprintf("%s.png", imageFileName);
-	char* imagePath = pblCgiSprintf("%s/%s", convertedPicturesPath, imageName);
-	char* imageUrl = pblCgiSprintf("%s/%s", convertedPicturesUrl, imageName);
+	char* imagePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesPath"), imageName);
+	char* imageUrl = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesUrl"), imageName);
 
 	convertFile(uploadFilePath, imagePath);
 
@@ -804,38 +820,122 @@ static int uploadImage()
 	return 0;
 }
 
-static int setCookie()
+static int setCookie(int clear)
 {
-	time_t now = time(NULL);
-	char* timeString = pblCgiStrFromTimeAndFormat(now, "%02d%02d%02d%02d%02d%02d");
-
-	char* remotePort = pblCgiGetEnv("REMOTE_PORT");
-	if (remotePort && isdigit(*remotePort))
+	if (clear)
 	{
-		srand(rand() ^ atoi(remotePort));
+		cookie = "";
 	}
-	int rand1 = rand();
-
-	char* remoteIp = pblCgiGetEnv("REMOTE_ADDR");
-	if (remoteIp && isdigit(*remoteIp))
+	else
 	{
-		srand(rand() ^ atoi(remoteIp));
+		time_t now = time(NULL);
+		char* timeString = pblCgiStrFromTimeAndFormat(now, "%02d%02d%02d%02d%02d%02d");
+
+		char* remotePort = pblCgiGetEnv("REMOTE_PORT");
+		if (remotePort && isdigit(*remotePort))
+		{
+			srand(rand() ^ atoi(remotePort));
+		}
+		int rand1 = rand();
+
+		char* remoteIp = pblCgiGetEnv("REMOTE_ADDR");
+		if (remoteIp && isdigit(*remoteIp))
+		{
+			srand(rand() ^ atoi(remoteIp));
+		}
+		int rand2 = rand();
+
+		struct timeval currentTime;
+		gettimeofday(&currentTime, NULL);
+		srand(rand() ^ currentTime.tv_sec ^ currentTime.tv_usec);
+		int rand3 = rand();
+
+		cookie = pblCgiSprintf("%s%08x%08x%08x", timeString, rand1, rand2, rand3);
 	}
-	int rand2 = rand();
-
-	struct timeval currentTime;
-	gettimeofday(&currentTime, NULL);
-	srand(rand() ^ currentTime.tv_sec ^ currentTime.tv_usec);
-	int rand3 = rand();
-
-	cookie = pblCgiSprintf("%s%08x%08x%08x", timeString, rand1, rand2, rand3);
-
 	pblCgiSetValue(PBL_CGI_COOKIE, cookie);
 	pblCgiSetValue(PBL_CGI_COOKIE_PATH, "/cgi-bin/");
 	pblCgiSetValue(PBL_CGI_COOKIE_DOMAIN, "www.tamikothiel.com");
 
-	printTemplate("startUpload.html", "text/html");
+	if (cookie && strlen(cookie) == cookieLength)
+	{
+		pblCgiSetValue("HasCookie", "true");
+	}
+	else
+	{
+		pblCgiUnSetValue("HasCookie");
+	}
 	return 0;
+}
+
+static int isUploadPossible()
+{
+	char* tag = "IsUploadPossible";
+	PBL_CGI_TRACE(">>> %s", tag);
+	int rc = 1;
+
+	char* handledPicturesPath = getRequiredConfigValue("HandledPicturesPath");
+	if (!handledPicturesPath)
+	{
+		return 0;
+	}
+
+	int maxPictureQueueLength = 10;
+	char* value = pblCgiConfigValue("MaxPictureQueueLength", "10");
+	if (value && isdigit(*value))
+	{
+		maxPictureQueueLength = atoi(value);
+	}
+
+	int handledPictures = 0;
+	char* handledExtensions[] = { ".txt", (char*)NULL };
+	PblList* handledFiles = listFilesInDirectory(handledPicturesPath, NULL, handledExtensions);
+	if (handledFiles)
+	{
+		handledPictures = pblListSize(handledFiles);
+		for (int i = 0; i < handledPictures; i++)
+		{
+			char* imageFileName = pblListGet(handledFiles, i);
+			if (imageFileName)
+			{
+				imageFileName = pblCgiStrReplace(imageFileName, ".txt", "");
+				removeImage(imageFileName);
+			}
+		}
+	}
+
+	if (maxPictureQueueLength > 0)
+	{
+		handledPictures = 0;
+		handledFiles = listFilesInDirectory(handledPicturesPath, NULL, handledExtensions);
+		if (handledFiles)
+		{
+			handledPictures = pblListSize(handledFiles);
+		}
+
+		int inputPictures = 0;
+		char* extensions[] = { ".png", (char*)NULL };
+		PblList* inputFiles = listFilesInDirectory(getRequiredConfigValue("InputPicturesPath"), NULL, extensions);
+		if (inputFiles)
+		{
+			inputPictures = pblListSize(inputFiles);
+		}
+		if (inputPictures - handledPictures > maxPictureQueueLength)
+		{
+			rc = 0;
+
+			int estimatedMinutesForRender = 2;
+			value = pblCgiConfigValue("EstimatedMinutesForRender", "2");
+			if (value && isdigit(*value))
+			{
+				estimatedMinutesForRender = atoi(value);
+			}
+			pblCgiSetValue("MaxPictureQueueLength", pblCgiSprintf("%d", maxPictureQueueLength));
+			pblCgiSetValue("PictureQueueLength", pblCgiSprintf("%d", inputPictures - handledPictures));
+			pblCgiSetValue("EstimatedMinutesForRender", pblCgiSprintf("%d", (inputPictures - handledPictures) * estimatedMinutesForRender));
+		}
+	}
+	PBL_CGI_TRACE("<<< %s: rc %d", tag, rc);
+	return rc;
 }
 
 static int lendMeYourFace(int argc, char* argv[])
@@ -881,6 +981,10 @@ static int lendMeYourFace(int argc, char* argv[])
 	// Read the cookie
 	//
 	cookie = pblCgiGetCoockie(pblCgiCookieKey, pblCgiCookieTag);
+	if (cookie && strlen(cookie) == cookieLength)
+	{
+		pblCgiSetValue("HasCookie", "true");
+	}
 
 	// Read and handle the action
 	//
@@ -891,17 +995,36 @@ static int lendMeYourFace(int argc, char* argv[])
 	}
 	else if (pblCgiStrEquals("setCookie", action))
 	{
-		rc = setCookie();
+		rc = setCookie(0);
+		printTemplate("startUpload.html", "text/html");
 	}
 	else if (!cookie || strlen(cookie) != cookieLength)
 	{
-		// All actions below need a valid cookie!
-		//
-		printTemplate("requestCookie.html", "text/html");
+		if (pblCgiStrEquals("startUpload", action) && !isUploadPossible())
+		{
+			printTemplate("noUpload.html", "text/html");
+		}
+		else
+		{
+			// All actions below need a valid cookie!
+			//
+			printTemplate("requestCookie.html", "text/html");
+		}
+	}
+	else if (pblCgiStrEquals("privateVideo", action))
+	{
+		rc = privateVideo();
 	}
 	else if (pblCgiStrEquals("startUpload", action))
 	{
-		printTemplate("startUpload.html", "text/html");
+		if (!isUploadPossible())
+		{
+			printTemplate("noUpload.html", "text/html");
+		}
+		else
+		{
+			printTemplate("startUpload.html", "text/html");
+		}
 	}
 	else if (pblCgiStrEquals("uploadImage", action))
 	{
@@ -915,22 +1038,27 @@ static int lendMeYourFace(int argc, char* argv[])
 	{
 		rc = deleteImage();
 	}
+	else if (pblCgiStrEquals("deleteVideo", action))
+	{
+		rc = deleteVideo();
+	}
+	else if (pblCgiStrEquals("deleteData", action))
+	{
+		rc = deleteData();
+		rc |= setCookie(1);
+		rc |= nextPublicVideo();
+	}
 	else if (pblCgiStrEquals("useImage", action))
 	{
 		rc = useImage();
-	}
-	else if (pblCgiStrEquals("privateVideo", action))
-	{
-		rc = privateVideo();
 	}
 	else
 	{
 		rc = nextPublicVideo();
 	}
-
 	PBL_CGI_TRACE("<< %s: rc %d", tag, rc);
 	return rc;
-	}
+}
 
 int main(int argc, char* argv[])
 {
