@@ -4,8 +4,18 @@
  <!--#INCLUDE header.html-->
 
 <h2>Please select a file for upload</h2>
-The image you upload should be in portrait format. You can review the image before it is used.
+The image should be in landscape format with your face in the middle and your mouth slightly open, and you should <b>NOT</b> smile.
+<br>
+Like in the example:
+<p>
+<img src="https://www.tamikothiel.com/lendmeyourface/online/examples/example-upload.jpg" height="256">
+<p>
+The image will be cropped to a square, like in this example:
+<p>
+<img src="https://www.tamikothiel.com/lendmeyourface/online/examples/example-squared.png" height="256">
 
+<p>
+You can review the image before it is used.
 <p>
 <form enctype="multipart/form-data" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post">
   <input type="file" id="myFile" name="filename">
