@@ -44,14 +44,31 @@ extern "C"
 #include <errno.h>
 #include <ctype.h>
 #include <time.h>
+#include <memory.h>
+#include <malloc.h>
+#include <assert.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 
 #include <winsock2.h>
+#include <direct.h>
+#include <windows.h> 
+#include <process.h>
 
 #else
+
 #include <sys/time.h>
 #include <unistd.h>
+#include <signal.h>
+#include <math.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #endif
 
 #include "pbl.h"
@@ -72,6 +89,8 @@ extern "C"
 
 #define PBL_CGI_TRACE_FILE                     "TraceFilePath"
 
+#define pblCgiRand() (abs((rand()<<24) ^ (rand()<<16) ^ (rand()<<8) ^ rand()))
+
 	/*****************************************************************************/
 	/* Variable declarations                                                     */
 	/*****************************************************************************/
@@ -80,7 +99,6 @@ extern "C"
 
 	extern struct timeval pblCgiStartTime;
 	extern FILE* pblCgiTraceFile;
-	extern char* pblCgiValueIncrement;
 
 	extern char* pblCgiQueryString;
 	extern char* pblCgiCookieKey;
@@ -92,6 +110,7 @@ extern "C"
 	/* Function declarations                                                     */
 	/*****************************************************************************/
 
+	extern void pblCgiSetSelfDestruction(int seconds);
 	extern char* pblCgiMalloc(char* tag, size_t size);
 	extern char* pblCgiConfigValue(char* key, char* defaultValue);
 	extern void pblCgiInitTrace(struct timeval* startTime, char* traceFilePath);
