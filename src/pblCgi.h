@@ -26,12 +26,6 @@
  please see: http://www.mission-base.com/.
 
 $Log: pblCgi.h,v $
-Revision 1.2  2020/11/10 21:55:52  peter
-Working on the online version of Lend Me Your Face.
-
-Revision 1.1  2020/11/10 16:14:43  peter
-*** empty log message ***
-
  */
 
 #ifdef __cplusplus

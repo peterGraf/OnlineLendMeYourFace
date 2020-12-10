@@ -24,48 +24,12 @@
    please see: http://www.mission-base.com/.
 
    $Log: pbl.c,v $
-   Revision 1.1  2020/11/10 16:14:45  peter
-   *** empty log message ***
-
-   Revision 1.1  2019/01/19 00:03:55  peter
-   PBL for arpoise directory service
-
-   Revision 1.1  2018/07/20 15:25:27  peter
-   *** empty log message ***
-
-   Revision 1.19  2018/03/10 18:00:45  peter
-   Cleanup of unneeded parentheses
-
-   Revision 1.18  2015/02/22 07:06:06  peter
-   Port to Visual Studio 2012.
-
-   Revision 1.17  2011/02/08 22:51:35  peter
-   Enabled spell checking on comments.
-
-   Revision 1.16  2010/11/07 01:21:28  peter
-   Cleanup.
-
-   Revision 1.15  2010/05/30 20:06:45  peter
-   Removed warnings found by 'Microsoft Visual C++ 2010'.
-
-   Revision 1.14  2009/03/08 20:56:50  peter
-   port to gcc (Ubuntu 4.3.2-1ubuntu12) 4.3.2.
-   Exposing the hash set and tree set interfaces.
-
-   Revision 1.13  2009/02/03 16:40:14  peter
-   PBL version 1.04, optimizations,
-   MAC OS X port, port to Microsoft Visual C++ 2008 Express Edition,
-   exposing the array list and the linked list interface
-
-
-   Revision 1.2  2002/09/12 20:47:13  peter
-   added the isam file handling to the library
 
 */
 /*
  * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
  */
-char* pbl_c_id = "$Id: pbl.c,v 1.1 2020/11/10 16:14:45 peter Exp $";
+char* pbl_c_id = "$Id: pbl.c,v 1.2 2020/12/10 16:14:45 peter Exp $";
 
 #include <stdio.h>
 #include <string.h>

@@ -26,11 +26,10 @@ Peter Graf, see <https://www.mission-base.com/peter/>
 LendMeYourFace, see <https://www.tamikothiel.com/lendmeyourface/>
 
 */
-
 /*
 * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
 */
-char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.7 2020/12/04 20:21:45 peter Exp $";
+char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.16 2020/12/10 20:21:45 peter Exp $";
 
 #include "pblCgi.h"
 

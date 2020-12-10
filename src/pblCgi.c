@@ -24,21 +24,11 @@
  please see: http://www.mission-base.com/.
 
  $Log: pblCgi.c,v $
- Revision 1.3  2020/11/11 23:40:31  peter
- Working on nextVideo
-
- Revision 1.2  2020/11/10 21:55:52  peter
- Working on the online version of Lend Me Your Face.
-
- Revision 1.1  2020/11/10 16:14:44  peter
- *** empty log message ***
-
  */
-
  /*
   * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
   */
-char* pblCgi_c_id = "$Id: pblCgi.c,v 1.3 2020/11/11 23:40:31 peter Exp $";
+char* pblCgi_c_id = "$Id: pblCgi.c,v 1.6 2020/12/11 23:40:31 peter Exp $";
 
 #include <stdio.h>
 #include <memory.h>
