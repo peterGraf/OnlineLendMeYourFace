@@ -1,30 +1,115 @@
-<!-- 
- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
- -->
- <!--#INCLUDE header.html-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
 
-<h2>Please select a file for upload</h2>
-The image should be in landscape format with your face in the middle and your mouth slightly open, and you should <b>NOT</b> smile.
-<br>
-Like in the example:
-<p>
-<img src="https://www.tamikothiel.com/lendmeyourface/online/examples/example-upload.jpg" height="256">
-<p>
-The image will be cropped to a square, like in this example:
-<p>
-<img src="https://www.tamikothiel.com/lendmeyourface/online/examples/example-squared.png" height="256">
+  <!--#INCLUDE navigation-mobil.html-->
 
-<p>
-You can review the image before it is used.
-<p>
-<form enctype="multipart/form-data" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post">
-  <input type="file" id="myFile" name="filename">
-  <input type="submit" value="Upload">
-</form>
+  <div class="background">
+    <div class="content">
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="submit" value="Back to Videos">
-</form>
+      <!--#INCLUDE navigation-desktop.html-->
 
-<!--#INCLUDE footer.html-->
+      <div class="logo-heading"></div>
+      <div class="heading">
+        <h1>Lend Me Your Face!</h1>
+        <br />
+      </div>
+      <div class="subheading">Interactive video work</div>
+
+      <div class="line"></div>
+
+      <h2>Please select a file for upload</h2>
+      The image should be in landscape format with your face in the middle and your mouth
+      slightly open, and you should
+      <b>NOT</b>
+      smile.
+      <br />
+      <br />
+      <br />
+
+      <div class="left-container">
+        <strong>Like in the example:</strong>
+        <br />
+        <br />
+        <img src="/lendmeyourface/online/Images/IdealPhoto_910x512.jpg" width="100%" />
+      </div>
+
+      <div class="right-container">
+        <strong>The image will be cropped to a square:</strong>
+        <br />
+        <br />
+        <img src="/lendmeyourface/online/Images/IdealPhoto512sq.png" width="100%" />
+      </div>
+
+      <div class="right-container-mobil">
+        <strong>The image will be cropped to a square:</strong>
+        <br />
+        <br />
+        <img
+          src="https://www.tamikothiel.com/lendmeyourface/online/Images/IdealPhoto_910x512-2.jpg"
+          width="100%" />
+      </div>
+
+      <div class="line2"></div>
+
+      <div class="button-wrapper-large">
+        <form enctype="multipart/form-data"
+          action="/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post" />
+          <input type="file" name="file" id="file" class="inputfile" />
+          <label id="label1" for="file">Choose a file...</label>
+          <label id="label2">No file selected</label>
+      </div>
+
+      <button class="button">
+        <img src="/lendmeyourface/online/Icons/upload-grau.svg" alt="upload" />
+        <input type="submit" value="Upload Image" />
+      </button>
+      </form>
+
+      <button onclick="document.getElementById('backToVideosForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/back-to-video.svg" alt="Back to Videos" />
+        <div class="button-text2">Back to Videos</div>
+      </button>
+
+      <form id="backToVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post"></form>
+
+      <script>
+              var label = document.getElementById("label2");
+              var labelVal = label.innerHTML;
+              var input = document.getElementById("file");
+
+              input
+                  .addEventListener(
+                      'change',
+                      function(e) {
+                        var fileName = '';
+                        if (this.files
+                            && this.files.length > 0)
+                          fileName = e.target.value
+                              .split('\\').pop();
+
+                        if (fileName)
+                          label.innerHTML = fileName;
+                        else
+                          label.innerHTML = labelVal;
+                      });
+            </script>
+      <br />
+      <div class="zusatz-text">
+        <strong>You will be able to review the image before it is used.</strong>
+      </div>
+
+      <div class="line3"></div>
+      <!--#INCLUDE footer.html-->
+    </div>
+  </div>
+</body>
+</html>

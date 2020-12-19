@@ -1,21 +1,65 @@
-<!-- 
- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
- -->
- <!--#INCLUDE header.html-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
 
-<h2>Lend Me Your Face needs to set a cookie</h2>
-The cookie will only be used inside of Lend Me Your Face on this website. 
-<h3>Do you want to allow this?</h3>
+<body>
 
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>">
-  <input type="submit" value="No">
-</form>
+  <!--#INCLUDE navigation-mobil.html-->
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="action" name="action" value="setCookie">
-  <input type="submit" value="Yes">
-</form>
+  <div class="background">
+    <div class="content">
 
-<!--#INCLUDE footer.html-->
+      <!--#INCLUDE navigation-desktop.html-->
+
+      <div class="logo-heading"></div>
+      <div class="heading">
+        <h1>Lend Me Your Face!</h1>
+        <br />
+      </div>
+      <div class="subheading">Interactive video work</div>
+
+      <div class="line"></div>
+
+      <h2>Lend Me Your Face! needs to set a cookie</h2>
+      The cookie will only be used inside of Lend Me Your Face! on this website.
+      <br />
+      <br />
+      <strong>Do you want to allow this?</strong>
+      <br />
+      <br />
+
+      <div class="line2"></div>
+
+      <form id="YesForm" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi"
+        method="post">
+        <input type="hidden" id="action" name="action" value="setCookie" />
+      </form>
+
+      <form id="NoForm" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi"
+        method="post">
+        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
+      </form>
+
+      <button onclick="document.getElementById('YesForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/yes.svg" alt="Yes" />
+        <div class="button-text2">Yes</div>
+      </button>
+
+      <button onclick="document.getElementById('NoForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/no.svg" alt="No" />
+        <div class="button-text2">No</div>
+      </button>
+
+      <div class="line3"></div>
+      <!--#INCLUDE footer.html-->
+    </div>
+  </div>
+</body>
+</html>

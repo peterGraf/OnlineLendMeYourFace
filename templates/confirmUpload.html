@@ -1,34 +1,77 @@
-<!-- 
- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
- -->
- <!--#INCLUDE header.html-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
 
-<h2>Do you want to use this image?</h2>
+  <!--#INCLUDE navigation-mobil.html-->
 
-The videos created from this image will only be visible to you!
+  <div class="background">
+    <div class="content">
 
-<p>
-<img src="<?imageUrl>" height="512" width="512">
+      <!--#INCLUDE navigation-desktop.html-->
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
-  <input type="hidden" id="action" name="action" value="deleteImage">
-  <input type="submit" value="Upload Another Image">
-</form>
+      <div class="logo-heading"></div>
+      <div class="heading">
+        <h1>Lend Me Your Face!</h1>
+        <br />
+      </div>
+      <div class="subheading">Interactive video work</div>
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
-  <input type="hidden" id="action" name="action" value="rotateImage">
-  <input type="submit" value="Rotate 90 deg Clockwise">
-</form>
+      <div class="line"></div>
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="imageFileName" name="imageFileName" value="<?imageFileName>">
-  <input type="hidden" id="action" name="action" value="useImage">
-  <input type="submit" value="Use the Image">
-</form>
+      <h2>Do you want to use this image?</h2>
 
-<!--#INCLUDE footer.html-->
+      The videos created from this image will only be visible to you!
+
+      <p class="image-small">
+        <img src="<?imageUrl>" height="512" width="512" />
+      </p>
+
+      <div class="line2"></div>
+
+      <form id="useImageForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="imageFileName" name="imageFileName"
+          value="<?imageFileName>" />
+        <input type="hidden" id="action" name="action" value="useImage" />
+      </form>
+
+      <form id="rotateImageForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="imageFileName" name="imageFileName"
+          value="<?imageFileName>" />
+        <input type="hidden" id="action" name="action" value="rotateImage" />
+      </form>
+
+      <form id="deleteImageForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="imageFileName" name="imageFileName"
+          value="<?imageFileName>" />
+        <input type="hidden" id="action" name="action" value="deleteImage" />
+      </form>
+      
+      <button onclick="document.getElementById('deleteImageForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/other-image.svg" alt="Replace Image" />
+        <div class="button-text2">Replace Image</div>
+      </button>
+
+      <button onclick="document.getElementById('rotateImageForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/rotate.svg" alt="Rotate Image" />
+        <div class="button-text2">Rotate Image</div>
+      </button>
+
+      <button onclick="document.getElementById('useImageForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/yes.svg" alt="Use Image" />
+        <div class="button-text2">Use Image</div>
+      </button>
+
+      <div class="line3"></div>
+      <!--#INCLUDE footer.html-->
+    </div>
+  </div>
+</body>
+</html>

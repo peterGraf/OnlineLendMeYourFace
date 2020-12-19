@@ -1,19 +1,59 @@
-<!-- 
- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
- -->
- <!--#INCLUDE header.html-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
 
-<h2>Upload not possible</h2>
+  <!--#INCLUDE navigation-mobil.html-->
 
-<h3>Sorry, due to an unusual high volume of requests to our site, it is not possible to upload more pictures at this time.</h3>
-<h3>We apologize, please try again later.</h3>
+  <div class="background">
+    <div class="content">
 
-<p>
-There are currently <?PictureQueueLength> pictures to handle, we estimate this will take <?EstimatedMinutesForRender> minutes.
+      <!--#INCLUDE navigation-desktop.html-->
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="submit" value="Back to Videos">
-</form>
+      <div class="logo-heading"></div>
+      <div class="heading">
+        <h1>Lend Me Your Face!</h1>
+        <br />
+      </div>
+      <div class="subheading">Interactive video work</div>
 
-<!--#INCLUDE footer.html-->
+      <div class="line"></div>
+
+      <h2>Upload not possible!</h2>
+
+      <strong>Sorry, due to an unusual high volume of requests to our site, it is
+        not possible to upload more pictures at this time.</strong>
+
+      <p>We apologize, please try again later.</p>
+
+      <p>
+        There are currently
+        <!--?PictureQueueLength-->
+        pictures to be rendered, we estimate this will take
+        <!--?EstimatedMinutesForRender-->
+        minutes.
+      </p>
+
+      <div class="line2"></div>
+
+      <form id="publicVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
+      </form>
+
+      <button onclick="document.getElementById('publicVideosForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/view-video.svg" alt="Back to Videos" />
+        <div class="button-text2">Back to Videos</div>
+      </button>
+
+      <div class="line3"></div>
+      <!--#INCLUDE footer.html-->
+    </div>
+  </div>
+</body>
+</html>

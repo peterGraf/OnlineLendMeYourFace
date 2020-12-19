@@ -1,76 +1,125 @@
-<!-- 
- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved!
- -->
- <!--#INCLUDE header.html-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
 
-<h2>Public Videos of Lend Me Your Face</h2>
+  <!--#INCLUDE navigation-mobil.html-->
 
-<button onclick="playVideo()" type="button">Play Video</button>
-<button onclick="pauseVideo()" type="button">Pause Video</button>
+  <div class="background">
+    <div class="content">
 
-<p>
-<video id="video1" width="1024" height="512">
-  <source src="<?Video1>" type=video/mp4>
-</video>
+      <!--#INCLUDE navigation-desktop.html-->
 
-<script>
+      <div class="logo-heading"></div>
+      <div class="heading">
+        <h1>Lend Me Your Face!</h1>
+        <br />
+      </div>
+      <div class="subheading">Interactive video work</div>
 
-var video1 = document.getElementById("video1");
-var doDelete = false;
+      <div class="line2"></div>
 
-video1.oncanplaythrough = function()
-{
-  video1.play();
-};
+      <h2>Public Videos of Lend Me Your Face!</h2>
 
-video1.onended = function()
-{
-  if (doDelete)
-  {
-    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteData";
-  }
-  else
-  {
-    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi";
-  }
-};
+      <p>
+        <video onclick="playVideo()" id="video1" style="cursor:pointer" autoplay controls>
+        <source src="<?Video1>" type="video/mp4" /></video>
+      </p>
 
-function playVideo() { 
-  video1.play();
-} 
+      <div class="line2"></div>
 
-function pauseVideo() { 
-  video1.pause();
-}
+      <form id="publicVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
+      </form>
 
-function confirmDelete() {
-  pauseVideo();
-  if(confirm("Do you really want to delete all your data from Lend Me Your Face?"))
-  {
-    doDelete = true;
-    window.location.href = "https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi?action=deleteData";
-  }
-}
+      <form id="deleteDataForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="action" name="action" value="deleteData" />
+      </form>
 
-</script> 
+      <form id="uploadMyImageForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="action" name="action" value="startUpload" />
+      </form>
 
-<!--#IFDEF HasPrivateVideo-->
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="action" name="action" value="privateVideo">
-  <input type="submit" value="View my Videos">
-</form>
-<!--#ENDIF HasPrivateVideo-->
+      <form id="viewMyVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
+        <input type="hidden" id="action" name="action" value="privateVideo" />
+      </form>
 
-<p>
-<form action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi" method="post">
-  <input type="hidden" id="action" name="action" value="startUpload">
-  <input type="submit" value="Upload my Image">
-</form>
+      <script>
+							var video1 = document.getElementById("video1");
+							var doDelete = false;
 
-<!--#IFDEF HasCookie-->
-<p>
-<button onclick="confirmDelete()">Delete my Data</button>
-<!--#ENDIF HasCookie-->
+							video1.oncanplaythrough = function() {
+								video1.play();
+							};
 
-<!--#INCLUDE footer.html-->
+							video1.onended = function() {
+								if (doDelete) {
+									document.getElementById("deleteDataForm")
+											.submit();
+								} else {
+									document.getElementById("publicVideosForm")
+											.submit();
+								}
+							};
+
+							function playVideo() {
+								video1.play();
+							}
+
+							function pauseVideo() {
+								video1.pause();
+							}
+
+							function confirmDelete() {
+								pauseVideo();
+								if (confirm("Do you really want to delete all your data from Lend Me Your Face?")) {
+									doDelete = true;
+									document.getElementById("deleteDataForm")
+											.submit();
+								}
+							}
+						</script>
+
+      <button onclick="playVideo()" type="button" class="player">
+        <img src="/lendmeyourface/online/Icons/play_circle_outline-24px-grau3.svg"
+          alt="play" />
+        <div class="button-text2">Play Video</div>
+      </button>
+
+      <!--#IFDEF HasPrivateVideo-->
+
+      <button onclick="document.getElementById('viewMyVideosForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/view-video.svg" alt="View my Videos" />
+        <div class="button-text2">View my Videos</div>
+      </button>
+
+      <!--#ENDIF HasPrivateVideo-->
+
+      <button onclick="document.getElementById('uploadMyImageForm').submit()"
+        type="button">
+        <img src="/lendmeyourface/online/Icons/upload-grau.svg" alt="Upload my Image" />
+        <div class="button-text2">Upload my Image</div>
+      </button>
+
+      <!--#IFDEF HasCookie-->
+
+      <button onclick="confirmDelete()">
+        <img src="/lendmeyourface/online/Icons/no.svg" alt="delete" />
+        <div class="button-text2">Delete my Data</div>
+      </button>
+
+      <!--#ENDIF HasCookie-->
+
+      <div class="line3"></div>
+      <!--#INCLUDE footer.html-->
+    </div>
+  </div>
+</body>
+</html>

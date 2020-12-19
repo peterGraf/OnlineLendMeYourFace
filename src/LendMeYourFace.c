@@ -29,7 +29,7 @@ LendMeYourFace, see <https://www.tamikothiel.com/lendmeyourface/>
 /*
 * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
 */
-char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.16 2020/12/10 20:21:45 peter Exp $";
+char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.18 2020/12/19 20:21:45 peter Exp $";
 
 #include "pblCgi.h"
 
@@ -46,6 +46,7 @@ static const unsigned int timeStringLength = 12;
 static const unsigned int expectedCookieLength = 44;
 static char* cookie;
 static int cookieLength;
+static char* lastVideo;
 
 static int setCookie(int clear)
 {
@@ -59,6 +60,10 @@ static int setCookie(int clear)
 	{
 		time_t now = time(NULL);
 		char* timeString = pblCgiStrFromTimeAndFormat(now, "%02d%02d%02d%02d%02d%02d");
+		if (timeString)
+		{
+			srand(pblCgiRand() ^ pblHtHashValueOfString((unsigned char*)timeString));
+		}
 
 		char* remotePort = pblCgiGetEnv("REMOTE_PORT");
 		if (remotePort && isdigit(*remotePort))
@@ -134,9 +139,8 @@ static void printTemplate(char* fileName, char* contentType)
 	pblCgiPrint(getRequiredConfigValue("TemplateDirectoryPath"), fileName, contentType);
 }
 
-static int stringEndsWith(char* string, char* end)
+static int stringEndsWith(char* string, int length, char* end)
 {
-	int length = strlen(string);
 	int endLength = strlen(end);
 	return length >= endLength && !strcmp(end, string + length - endLength);
 }
@@ -149,10 +153,11 @@ static int nameMatches(char* name, char* pattern, char** extensions)
 	}
 	if (extensions)
 	{
+		int length = strlen(name);
 		char* extension;
 		for (int i = 0; (extension = extensions[i]) && *extension; i++)
 		{
-			if (stringEndsWith(name, extension))
+			if (stringEndsWith(name, length, extension))
 			{
 				return 1;
 			}
@@ -160,6 +165,58 @@ static int nameMatches(char* name, char* pattern, char** extensions)
 		return 0;
 	}
 	return 1;
+}
+
+static int hasFilesInDirectory(char* path, char* pattern, char** extensions)
+{
+	char* tag = "HasFilesInDirectory";
+	PBL_CGI_TRACE(">>>> %s: '%s', pattern '%s'", tag, path ? path : "", pattern ? pattern : "");
+	int result = 0;
+#ifdef _WIN32
+	HANDLE hFind;
+	WIN32_FIND_DATA findFileData;
+
+	char* directoryPath = pblCgiSprintf("%s*.*", path);
+
+	if ((hFind = FindFirstFileA(directoryPath, &findFileData)) == INVALID_HANDLE_VALUE)
+	{
+		pblCgiExitOnError("%s: Failed to access directory '%s', errno = %d\n", tag, path, GetLastError());
+		return 0;
+	}
+	do
+	{
+		char buffer[1024];
+		sprintf(buffer, "%ws", findFileData.cFileName);
+
+		if (nameMatches(buffer, pattern, extensions))
+		{
+			result = 1;
+			break;
+		}
+	} while (FindNextFile(hFind, &findFileData));
+	FindClose(hFind);
+#else
+	DIR* dir;
+	if ((dir = opendir(path)) == NULL)
+	{
+		pblCgiExitOnError("%s: Failed to access directory '%s', errno = %d\n", tag, path, errno);
+		return 0;
+	}
+
+	struct dirent* ent;
+	while ((ent = readdir(dir)) != NULL)
+	{
+		if (nameMatches(ent->d_name, pattern, extensions))
+		{
+			result = 1;
+			break;
+		}
+	}
+	closedir(dir);
+#endif
+
+	PBL_CGI_TRACE("<<<< %s: %d", tag, result);
+	return result;
 }
 
 static PblList* listFilesInDirectory(char* path, char* pattern, char** extensions)
@@ -270,10 +327,39 @@ static char* nextPublicVideoUrl()
 		pblCgiExitOnError("%s: There are no videos in directory '%s'.\n", tag, getRequiredConfigValue("PublicVideosPath"));
 		return NULL;
 	}
-	char* url = pblCgiStrCat(getRequiredConfigValue("PublicVideosUrl"), pblListGet(videos, pblCgiRand() % pblListSize(videos)));
-
+	char* url = NULL;
+	int nVideos = pblListSize(videos);
+	for (int i = 0; i < 1000; i++)
+	{
+		char* video = pblListGet(videos, pblCgiRand() % nVideos);
+		if (nVideos > 1 && pblCgiStrEquals(lastVideo, video))
+		{
+			continue;
+		}
+		pblCgiSetValue("lastVideo", video);
+	    url = pblCgiStrCat(getRequiredConfigValue("PublicVideosUrl"), video);
+		break;
+	}
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url);
 	return url;
+}
+
+static int hasOutputVideo()
+{
+	char* tag = "hasOutputVideo";
+	PBL_CGI_TRACE(">>>> %s", tag);
+
+	if (!cookie || cookieLength != expectedCookieLength)
+	{
+		PBL_CGI_TRACE("<<<< %s: Invalid cookie '%s'", tag, cookie ? cookie : "NULL");
+		return 0;
+	}
+
+	char* outputVideosPath = getRequiredConfigValue("OutputVideosPath");
+	char* extensions[] = { ".mp4", (char*)NULL };
+	int result = hasFilesInDirectory(outputVideosPath, cookie + timeStringLength, extensions);
+	PBL_CGI_TRACE("<<<< %s: Result %d", tag, result);
+	return result;
 }
 
 static char* nextPrivateVideoUrl()
@@ -305,17 +391,27 @@ static char* nextPrivateVideoUrl()
 	}
 
 	char* url = NULL;
-	for (int i = 0; i < 100; i++)
+	int nVideos = pblListSize(videos);
+	for (int i = 0; i < 1000; i++)
 	{
-		char* video = pblListGet(videos, pblCgiRand() % pblListSize(videos));
+		char* video = pblListGet(videos, pblCgiRand() % nVideos);
 		char* txtFile = pblCgiStrReplace(video, ".mp4", ".txt");
 
-		if (pblCollectionContains(txtFiles, txtFile))
+		if (!pblCollectionContains(txtFiles, txtFile))
 		{
-			pblCgiSetValue("VideoName1", video);
-			url = pblCgiStrCat(getRequiredConfigValue("OutputVideosUrl"), video);
+			continue;
+		}
+		if (pblCgiStrEquals(lastVideo, video))
+		{
+			if (nVideos > 1)
+			{
+				continue;
+			}
 			break;
 		}
+		pblCgiSetValue("lastVideo", video);
+		url = pblCgiStrCat(getRequiredConfigValue("OutputVideosUrl"), video);
+		break;
 	}
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url ? url : "");
 	return url;
@@ -326,12 +422,15 @@ static int nextPublicVideo()
 	char* tag = "NextPublicVideo";
 	PBL_CGI_TRACE(">>> %s", tag);
 
-	char* videoUrl = nextPrivateVideoUrl();
-	if (videoUrl && *videoUrl)
+	if (hasOutputVideo())
 	{
 		pblCgiSetValue("HasPrivateVideo", "true");
 	}
-	videoUrl = nextPublicVideoUrl();
+	else
+	{
+		pblCgiUnSetValue("HasPrivateVideo");
+	}
+	char* videoUrl = nextPublicVideoUrl();
 	pblCgiSetValue("Video1", videoUrl);
 	printTemplate("index.html", "text/html");
 
@@ -351,6 +450,7 @@ static int privateVideo()
 	}
 	else
 	{
+		pblCgiUnSetValue("HasPrivateVideo");
 		videoUrl = nextPublicVideoUrl();
 	}
 	pblCgiSetValue("Video1", videoUrl);
@@ -405,9 +505,7 @@ static int deleteVideo()
 		videoName = pblCgiStrReplace(videoName, ".mp4", "");
 		removeFilesFromDirectories(directories, videoName, extensions);
 	}
-
-	char* videoUrl = nextPrivateVideoUrl();
-	int hasPrivateVideo = videoUrl && *videoUrl ? 1 : 0;
+	int hasPrivateVideo = hasOutputVideo();
 
 	PBL_CGI_TRACE("<<< %s: hasPrivateVideo %d", tag, hasPrivateVideo);
 	return hasPrivateVideo ? privateVideo() : nextPublicVideo();
@@ -903,6 +1001,12 @@ static int lendMeYourFace(int argc, char* argv[])
 	if (cookie && (cookieLength = strlen(cookie)) == expectedCookieLength)
 	{
 		pblCgiSetValue("HasCookie", "true");
+	}
+
+	lastVideo = pblCgiQueryValue("lastVideo");
+	if (lastVideo && *lastVideo)
+	{
+		pblCgiSetValue("lastVideo", lastVideo);
 	}
 
 	char* action = pblCgiQueryValue("action");
