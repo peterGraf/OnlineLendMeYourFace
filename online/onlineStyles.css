@@ -347,6 +347,23 @@ button img {
 }
 
 
+.title {
+	  display: table;
+	  position:absolute;
+      border-spacing: 16px;
+      width: 200px;
+	  top:-3px;
+	  left:25%;
+   }
+   
+.logo {
+	  position:absolute;
+      border-spacing: 16px;
+      width: 20px;
+	  top:12px;
+	  left:22%;
+}
+
  }
 
 
@@ -447,6 +464,15 @@ h4 {font-family: Arial, Helvetica, sans-serif;
 	line-height:1.2em;
 	color:red;
 }
+
+h6 {font-weight:bold;
+	font-size:14px;
+	color:black;
+	margin:0px !important;
+	letter-spacing:0.02em;}
+	
+h6 a {
+	textdecoration:none;}
 
 
 a {
@@ -740,6 +766,8 @@ div#menuToggle {display: none;}
 .mobile-menu {display: none;}
 .social-media {display: none;}
 .social-icon {display: none;}
+.title {display: none;}
+.logo {display: none;}
 }
 
 
@@ -765,7 +793,22 @@ Social Media Icons on mobile devices
    .social-icon:nth-child(2) { width: 50%; }
 
 
-
+.title {
+	  display: table;
+	  position:absolute;
+      border-spacing: 16px;
+      width: 200px;
+	  top:-3px;
+	  left:16%;
+   }
+   
+.logo {
+	  position:absolute;
+      border-spacing: 16px;
+      width: 20px;
+	  top:12px;
+	  left:14%;
+}
 
 /*
 Menu for desktop
@@ -808,18 +851,18 @@ img {width: 100%; height: auto; }
    }
    
 
-   .col:nth-child(1) { width: 15%; }
-   .col:nth-child(2) { width: 6,2%; }
-   .col:nth-child(3) { width: 6,2%; }
-   .col:nth-child(4) { width: 6,2%; }
-   .col:nth-child(5) { width: 6,2%; }
-   .col:nth-child(6) { width: 6,2%; }
-   .col:nth-child(7) { width: 6,2%; }
-   .col:nth-child(8) { width: 6,2%; }
-   .col:nth-child(9) { width: 6,2%; }
+    .col:nth-child(1) { width: 10%; }
+   .col:nth-child(2) { width: 5%; }
+   .col:nth-child(3) { width: 18%; }
+   .col:nth-child(4) { width: 8%; }
+   .col:nth-child(5) { width: 8%; }
+   .col:nth-child(6) { width: 8%; }
+   .col:nth-child(7) { width: 8%; }
+   .col:nth-child(8) { width: 8%; }
+   .col:nth-child(9) { width: 7%; }
    .col:nth-child(10) { width: 5%; }
    .col:nth-child(11) { width: 5%; }
-   .col:nth-child(12) { width: 15%; }
+   .col:nth-child(12) { width: 10%; }
 }
 
 
@@ -840,6 +883,7 @@ h1 {font-size:2.1em !important; letter-spacing:-0.01em !important;}
 h2 {font-size: 1.3em; text-align:center;}
 h4 {font-size: 1.3em; text-align:center;}
 h3 {font-size:1.3 em;}
+h6 {font-size:20px !important;}
 .line {margin-top:25px; margin-bottom:25px;}
 
 .sprung {visibility: hidden; height: 0px !important; position: absolute; margin: -50px;}

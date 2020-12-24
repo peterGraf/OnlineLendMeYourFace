@@ -29,7 +29,7 @@ LendMeYourFace, see <https://www.tamikothiel.com/lendmeyourface/>
 /*
 * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
 */
-char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.18 2020/12/19 20:21:45 peter Exp $";
+char* LendMeYourFace_c_id = "$Id: LendMeYourFace.c,v 1.19 2020/12/24 22:16:00 peter Exp $";
 
 #include "pblCgi.h"
 
@@ -91,7 +91,7 @@ static int setCookie(int clear)
 		}
 		int rand4 = pblCgiRand();
 
-		cookie = pblCgiSprintf("%s%08x%08x%08x%08x", timeString, rand1, rand2, rand3, rand4);
+		cookie = pblCgiSprintf("%s%08x%08x%08x%08x", timeString, now, rand1 ^ rand2, rand3, rand4);
 		pblCgiSetValue("HasCookie", "true");
 	}
 	cookieLength = strlen(cookie);
