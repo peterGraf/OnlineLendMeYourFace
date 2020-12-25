@@ -16,22 +16,13 @@
     <div class="content">
 
       <!--#INCLUDE navigation-desktop.html-->
-
-      <div class="logo-heading"></div>
-      <div class="heading">
-        <h1>Lend Me Your Face!</h1>
-        <br />
-      </div>
-      <div class="subheading">Participatory deepfake AI art</div>
-
-      <div class="line"></div>
+      <!--#INCLUDE header.html-->
 
       <h2>Please select a file for upload</h2>
       The image should be in landscape format with your face in the middle and your mouth
       slightly open, and you should
       <b>NOT</b>
       smile.
-      <br />
       <br />
       <br />
 
@@ -63,9 +54,9 @@
       <div class="button-wrapper-large">
         <form enctype="multipart/form-data"
           action="/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post" />
-          <input type="file" name="file" id="file" class="inputfile" />
-          <label id="label1" for="file">Choose a file...</label>
-          <label id="label2">No file selected</label>
+        <input type="file" name="file" id="file" class="inputfile" />
+        <label id="label1" for="file">Choose a file...</label>
+        <label id="label2">No file selected</label>
       </div>
 
       <button class="button">
@@ -82,26 +73,26 @@
       <form id="backToVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post"></form>
 
       <script>
-              var label = document.getElementById("label2");
-              var labelVal = label.innerHTML;
-              var input = document.getElementById("file");
+							var label = document.getElementById("label2");
+							var labelVal = label.innerHTML;
+							var input = document.getElementById("file");
 
-              input
-                  .addEventListener(
-                      'change',
-                      function(e) {
-                        var fileName = '';
-                        if (this.files
-                            && this.files.length > 0)
-                          fileName = e.target.value
-                              .split('\\').pop();
+							input
+									.addEventListener(
+											'change',
+											function(e) {
+												var fileName = '';
+												if (this.files
+														&& this.files.length > 0)
+													fileName = e.target.value
+															.split('\\').pop();
 
-                        if (fileName)
-                          label.innerHTML = fileName;
-                        else
-                          label.innerHTML = labelVal;
-                      });
-            </script>
+												if (fileName)
+													label.innerHTML = fileName;
+												else
+													label.innerHTML = labelVal;
+											});
+						</script>
       <br />
       <div class="zusatz-text">
         <strong>You will be able to review the image before it is used.</strong>

@@ -16,18 +16,10 @@
     <div class="content">
 
       <!--#INCLUDE navigation-desktop.html-->
-
-      <div class="logo-heading"></div>
-      <div class="heading">
-        <h1>Lend Me Your Face!</h1>
-        <br />
-      </div>
-      <div class="subheading">Participatory deepfake AI art</div>
-
-      <div class="line2"></div>
+      <!--#INCLUDE header.html-->
 
       <!--#IFDEF HasPrivateVideo-->
-      <h2>Your Videos of Lend Me Your Face!</h2>
+      <h2>Your Videos of Go Fake Yourself!</h2>
       <!--#ENDIF HasPrivateVideo-->
 
       <!--#IFNDEF HasPrivateVideo-->
@@ -42,25 +34,25 @@
       <div class="line2"></div>
 
       <form id="deleteVideoForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
-        <input type="hidden" id="video" name="video" value="<?lastVideo>" />
-        <input type="hidden" id="action" name="action" value="deleteVideo" />
+        <input type="hidden" name="video" value="<?lastVideo>" />
+        <input type="hidden" name="action" value="deleteVideo" />
       </form>
 
       <form id="deleteDataForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
-        <input type="hidden" id="action" name="action" value="deleteData" />
+        <input type="hidden" name="action" value="deleteData" />
       </form>
 
       <form id="nextPrivateVideoForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
-        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
-        <input type="hidden" id="action" name="action" value="privateVideo" />
+        <input type="hidden" name="lastVideo" value="<?lastVideo>" />
+        <input type="hidden" name="action" value="privateVideo" />
       </form>
 
       <form id="publicVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
-        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
+        <input type="hidden" name="lastVideo" value="<?lastVideo>" />
       </form>
 
       <form id="uploadMyImageForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
-        <input type="hidden" id="action" name="action" value="startUpload" />
+        <input type="hidden" name="action" value="startUpload" />
       </form>
 
       <script>

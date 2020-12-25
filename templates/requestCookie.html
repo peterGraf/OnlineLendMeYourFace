@@ -17,18 +17,10 @@
     <div class="content">
 
       <!--#INCLUDE navigation-desktop.html-->
+      <!--#INCLUDE header.html-->
 
-      <div class="logo-heading"></div>
-      <div class="heading">
-        <h1>Lend Me Your Face!</h1>
-        <br />
-      </div>
-      <div class="subheading">Interactive video work</div>
-
-      <div class="line"></div>
-
-      <h2>Lend Me Your Face! needs to set a cookie</h2>
-      The cookie will only be used inside of Lend Me Your Face! on this website. All your data, photos and videos are private and anonymous. They exist only on the Lend Me Your Face! website and you can delete all your data at any time.
+      <h2>Go Fake Yourself! needs to set a cookie</h2>
+      The cookie will only be used inside of Go Fake Yourself! on this website. All your data, photos and videos are private and anonymous. They exist only on the Go Fake Yourself! website and you can delete all your data at any time.
       <br />
       <br />
       <strong>Do you want to allow this?</strong>
@@ -39,12 +31,12 @@
 
       <form id="YesForm" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi"
         method="post">
-        <input type="hidden" id="action" name="action" value="setCookie" />
+        <input type="hidden" name="action" value="setCookie" />
       </form>
 
       <form id="NoForm" action="https://www.tamikothiel.com/cgi-bin/LendMeYourFace.cgi"
         method="post">
-        <input type="hidden" id="lastVideo" name="lastVideo" value="<?lastVideo>" />
+        <input type="hidden" name="lastVideo" value="<?lastVideo>" />
       </form>
 
       <button onclick="document.getElementById('YesForm').submit()" type="button">
