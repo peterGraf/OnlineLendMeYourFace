@@ -76,7 +76,7 @@ while true; do
       VideoName="${Video%.*}" 
       echo "VideoName=$VideoName"
       
-      if [ "$VideoName" = 'index' ] || [ "$PictureName" = '*' ]; then
+      if [ "$VideoName" = 'index' ] || [ "$VideoName" = '*' ]; then
          continue
       fi
 
