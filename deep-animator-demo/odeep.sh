@@ -30,11 +30,6 @@ while true; do
     sleep 3
     continue
   fi
-  
-  # Copy a PauseFile to the server, in the next loop we delay unless some user deleted it
-  #
-  touch "$PauseFile"
-  scp "$PauseFile" "$RemoteDeepAnimator/$PauseFile"
 
   # PauseFile did not exist, start working after one second
   #
@@ -228,6 +223,11 @@ while true; do
     #
     mv "$LocalDeepAnimator/online/inputPictures/"* "$LocalDeepAnimator/online/handledPictures/"
     
+    # Copy a PauseFile to the server, in the next loop we delay unless some user deleted it
+    #
+    touch "$PauseFile"
+    scp "$PauseFile" "$RemoteDeepAnimator/$PauseFile"
+  
   fi
 
 # end forever
