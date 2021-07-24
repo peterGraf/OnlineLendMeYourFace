@@ -16,7 +16,11 @@
     <div class="content">
 
       <!--#INCLUDE navigation-desktop.html-->
+      <!--#INCLUDE navigation-lendmeyourface.html-->
       <!--#INCLUDE header.html-->
+      
+      
+     
 
       <!--#IFDEF HasPrivateVideo-->
       <h2>Your Videos of Go Fake Yourself!</h2>
@@ -30,7 +34,7 @@
         <video onclick="playVideo()" id="video1" style="cursor:pointer" autoplay controls>
         <source src="<?Video1>" type="video/mp4" /></video>
       </p>
-
+Close website and come back anytime (on same device!) to see your deepfakes  under "View My Videos." 
       <div class="line2"></div>
 
       <form id="deleteVideoForm" action="/cgi-bin/LendMeYourFace.cgi" method="post">
@@ -160,10 +164,12 @@
       </button>
 
       <!--#ENDIF HasCookie-->
+       
 
       <div class="line3"></div>
       <!--#INCLUDE footer.html-->
     </div>
   </div>
+
 </body>
 </html>

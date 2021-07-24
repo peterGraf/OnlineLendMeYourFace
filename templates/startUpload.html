@@ -16,18 +16,20 @@
     <div class="content">
 
       <!--#INCLUDE navigation-desktop.html-->
+      <!--#INCLUDE navigation-lendmeyourface.html-->
       <!--#INCLUDE header.html-->
+      
+      
+      
+      
 
-      <h2>Please select a file for upload</h2>
-      The image should be in landscape format with your face in the middle and your mouth
-      slightly open, and you should
-      <b>NOT</b>
-      smile.
+      <h2>"Choose a file" (also to take selfie) then "Upload image"</h2>
+      Image in landscape format with your face in the middle.
       <br />
       <br />
 
       <div class="left-container">
-        <strong>As in this example:</strong>
+        <strong>MOUTH <em>OPEN - DON'T</em> SMILE!</strong>
         <br />
         <br />
         <img src="/lendmeyourface/online/Images/IdealPhoto_910x512.jpg" width="100%" />
@@ -49,14 +51,16 @@
           width="100%" />
       </div>
 
+
+
       <div class="line2"></div>
 
       <div class="button-wrapper-large">
         <form enctype="multipart/form-data"
           action="/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post" />
         <input type="file" name="file" id="file" class="inputfile" />
-        <label id="label1" for="file">Choose a file...</label>
-        <label id="label2">No file selected</label>
+        <label id="label1" for="file">Choose image ...</label>
+        <label id="label2">No image selected</label>
       </div>
 
       <button class="button">
@@ -102,5 +106,6 @@
       <!--#INCLUDE footer.html-->
     </div>
   </div>
+ 
 </body>
 </html>
