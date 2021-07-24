@@ -225,7 +225,8 @@ static int hasFilesInDirectory(char* path, char* pattern, char** extensions)
 static PblList* listFilesInDirectory(char* path, char* pattern, char** extensions)
 {
 	char* tag = "ListFilesInDirectory";
-	PBL_CGI_TRACE(">>>> %s: '%s', pattern '%s'", tag, path ? path : "", pattern ? pattern : "");
+	PBL_CGI_TRACE(">>>> %s: '%s', pattern '%s', '%s'", tag, path ? path : "", pattern ? pattern : "",
+		extensions && extensions[0] ? extensions[0] : "");
 
 	PblList* list = pblListNewArrayList();
 	if (!list)
@@ -1135,7 +1136,8 @@ static int lendMeYourFace(int argc, char* argv[])
 
 	struct timeval currentTime;
 	gettimeofday(&currentTime, NULL);
-	srand(pblCgiRand() ^ currentTime.tv_sec ^ currentTime.tv_usec);
+	srand(pblCgiRand() ^ currentTime.tv_sec);
+	srand(pblCgiRand() ^ currentTime.tv_usec);
 
 #ifdef _WIN32
 	srand(pblCgiRand() ^ _getpid());
