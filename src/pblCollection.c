@@ -25,32 +25,12 @@
  please see: http://www.mission-base.com/.
 
  $Log: pblCollection.c,v $
- Revision 1.1  2020/11/10 16:14:44  peter
- *** empty log message ***
+ Revision 1.20  2021/06/12 22:53:22  peter
+ More cleanup
 
- Revision 1.1  2019/01/19 00:03:55  peter
- PBL for arpoise directory service
+ Revision 1.19  2021/06/12 11:18:27  peter
+ Synchronizing with github version
 
- Revision 1.1  2018/07/20 15:25:28  peter
- *** empty log message ***
-
- Revision 1.18  2018/03/10 18:00:45  peter
- Cleanup of unneeded parentheses
-
- Revision 1.17  2017/01/04 21:19:43  peter
- Code formatting
-
- Revision 1.16  2016/09/29 15:23:05  peter
- started to work on arvos
-
- Revision 1.15  2016/06/03 21:13:30  peter
- Syncing with GIT version.
-
- Revision 1.13  2010/05/19 22:38:45  peter
- Testing the map.
-
- Revision 1.12  2009/03/11 23:48:44  peter
- More tests and clean up.
 
  Revision 1.11  2009/03/08 20:56:50  peter
  port to gcc (Ubuntu 4.3.2-1ubuntu12) 4.3.2.
@@ -58,10 +38,10 @@
 
  */
 
-/*
- * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
- */
-char* pblCollection_c_id = "$Id: pblCollection.c,v 1.1 2020/11/10 16:14:44 peter Exp $";
+ /*
+  * Make sure "strings <exe> | grep Id | sort -u" shows the source file versions
+  */
+char* pblCollection_c_id = "$Id: pblCollection.c,v 1.20 2021/06/12 22:53:22 peter Exp $";
 
 #include <stdio.h>
 #include <memory.h>
@@ -74,10 +54,6 @@ char* pblCollection_c_id = "$Id: pblCollection.c,v 1.1 2020/11/10 16:14:44 peter
 
 #include "pbl.h"
 
-/*****************************************************************************/
-/* Functions                                                                 */
-/*****************************************************************************/
-
 /**
  * Compare two elements of a collection.
  *
@@ -85,34 +61,24 @@ char* pblCollection_c_id = "$Id: pblCollection.c,v 1.1 2020/11/10 16:14:44 peter
  * @return int rc == 0: left and right are equal
  * @return int rc  > 0: left is greater than right
  */
-int pblCollectionElementCompare( /*                                        */
-PblCollection * collection, /** The collection to compare the elements for */
-void *left, /** Left element for compare                                   */
-void *right /** Left element for compare                                   */
+int pblCollectionElementCompare( /*                                           */
+	PblCollection* collection, /** The collection to compare the elements for */
+	void* left, /** Left element for compare                                  */
+	void* right /** Left element for compare                                  */
 )
 {
 	if (left == right)
 	{
 		return 0;
 	}
-
 	if (!left)
 	{
-		if (!right)
-		{
-			return 0;
-		}
 		return -1;
 	}
 	if (!right)
 	{
-		if (!left)
-		{
-			return 0;
-		}
 		return 1;
 	}
-
 	if (collection->compare)
 	{
 		/*
@@ -120,7 +86,6 @@ void *right /** Left element for compare                                   */
 		 */
 		return (*(collection->compare))(&left, &right);
 	}
-
 	/*
 	 * Use the pointers of the objects to compare as default
 	 */
@@ -147,27 +112,25 @@ void *right /** Left element for compare                                   */
  * @return int rc == 0: left and right are equal
  * @return int rc  > 0: left is greater than right
  */
-int pblCollectionDefaultCompare( /*                 */
-const void *left, /** The left element for compare  */
-const void *right /** The right element for compare */
+int pblCollectionDefaultCompare( /*                     */
+	const void* left, /** The left element for compare  */
+	const void* right /** The right element for compare */
 )
 {
-	char * leftPointer = *(char**) left;
-	char * rightPointer = *(char**) right;
+	char* leftPointer = *(char**)left;
+	char* rightPointer = *(char**)right;
 
 	/*
 	 * Use the pointers of the objects to compare
 	 */
-	if (leftPointer < rightPointer)
-	{
-		return -1;
-	}
-
 	if (leftPointer == rightPointer)
 	{
 		return 0;
 	}
-
+	if (leftPointer < rightPointer)
+	{
+		return -1;
+	}
 	return 1;
 }
 
@@ -193,21 +156,21 @@ const void *right /** The right element for compare */
  * @return int rc == 0: left and right are equal
  * @return int rc  > 0: left is greater than right
  */
-int pblCollectionStringCompareFunction( /*           */
-const void * left, /* The left value for comparison  */
-const void * right /* The right value for comparison */
+int pblCollectionStringCompareFunction( /*              */
+	const void* left, /* The left value for comparison  */
+	const void* right /* The right value for comparison */
 )
 {
-	char * leftPointer = *(char**) left;
-	char * rightPointer = *(char**) right;
+	char* leftPointer = *(char**)left;
+	char* rightPointer = *(char**)right;
 
+	if (leftPointer == rightPointer)
+	{
+		return 0;
+	}
 	if (!leftPointer)
 	{
-		if (rightPointer)
-		{
-			return -1;
-		}
-		return 0;
+		return -1;
 	}
 	if (!rightPointer)
 	{
@@ -244,21 +207,21 @@ const void * right /* The right value for comparison */
  *
  * <BR>PBL_ERROR_PARAM_COLLECTION - The collection is not empty.
  */
-void * pblCollectionSetCompareFunction( /*                                 */
-PblCollection * collection, /** The collection to set compare function for */
-int (*compare) /** The compare function to set                             */
-( /*                                                                       */
-const void* left, /** "left" element for compare                           */
-const void* right /** "right" element for compare                          */
-) /*                                                                       */
+void* pblCollectionSetCompareFunction( /*                                     */
+	PblCollection* collection, /** The collection to set compare function for */
+	int (*compare) /** The compare function to set                            */
+	( /*                                                                      */
+		const void* left, /** "left" element for compare                      */
+		const void* right /** "right" element for compare                     */
+		) /*                                                                  */
 )
 {
-	void * retptr = collection->compare;
+	void* retptr = collection->compare;
 
 	if (collection->size > 0)
 	{
 		pbl_errno = PBL_ERROR_PARAM_COLLECTION;
-		return (void*) -1;
+		return (void*)-1;
 	}
 
 	collection->compare = compare;
@@ -280,16 +243,16 @@ const void* right /** "right" element for compare                          */
  * @return int rc != 0: The specified element is present.
  * @return int rc == 0: The specified element is not present.
  */
-int pblCollectionContains( /*                          */
-PblCollection * collection, /** The collection to use  */
-void * element /** Element to look for                 */
+int pblCollectionContains( /*                             */
+	PblCollection* collection, /** The collection to use  */
+	void* element /** Element to look for                 */
 )
 {
 	if (PBL_LIST_IS_LIST(collection))
 	{
-		return pblListIndexOf((PblList *) collection, element) >= 0;
+		return pblListIndexOf((PblList*)collection, element) >= 0;
 	}
-	return pblSetContains((PblSet*) collection, element);
+	return pblSetContains((PblSet*)collection, element);
 }
 
 /**
@@ -301,7 +264,7 @@ void * element /** Element to look for                 */
  * @return int rc == 0: This object is not a collection.
  */
 int pblCollectionIsCollection( /*    */
-void * object /** The object to test */
+	void* object /** The object to test */
 )
 {
 	return PBL_COLLECTION_IS_COLLECTION(object);
@@ -322,11 +285,11 @@ void * object /** The object to test */
  * <BR>PBL_ERROR_PARAM_COLLECTION        - The collection cannot be iterated.
  * <BR>PBL_ERROR_CONCURRENT_MODIFICATION - The collection was modified concurrently.
  */
-PblList * pblCollectionConvertToArrayList( /*            */
-PblCollection * collection /** The collection to convert */
+PblList* pblCollectionConvertToArrayList( /*                */
+	PblCollection* collection /** The collection to convert */
 )
 {
-	PblList * list = pblListNewArrayList();
+	PblList* list = pblListNewArrayList();
 	if (!list)
 	{
 		return NULL;
@@ -361,15 +324,15 @@ PblCollection * collection /** The collection to convert */
  * <BR>PBL_ERROR_CONCURRENT_MODIFICATION - The collection was modified concurrently.
  * <BR>PBL_ERROR_OUT_OF_BOUNDS           - Maximum capacity of the hash set exceeded.
  */
-PblSet * pblCollectionConvertToHashSet( /*                                */
-PblCollection * collection, /** The collection to convert                 */
-int (*hashValue) /** The hash value function for the new set, may be NULL */
-( /*                                                                      */
-const void* element /** The element to get the hash value for             */
-) /*                                                                      */
+PblSet* pblCollectionConvertToHashSet( /*                                     */
+	PblCollection* collection, /** The collection to convert                  */
+	int (*hashValue) /** The hash value function for the new set, may be NULL */
+	( /*                                                                      */
+		const void* element /** The element to get the hash value for         */
+		) /*                                                                  */
 )
 {
-	PblSet * set = pblSetNewHashSet();
+	PblSet* set = pblSetNewHashSet();
 	if (!set)
 	{
 		return NULL;
@@ -379,11 +342,11 @@ const void* element /** The element to get the hash value for             */
 
 	if (hashValue)
 	{
-		((PblHashSet*) set)->hashValue = hashValue;
+		((PblHashSet*)set)->hashValue = hashValue;
 	}
 	else if (PBL_SET_IS_HASH_SET(collection))
 	{
-		((PblHashSet*) set)->hashValue = ((PblHashSet*) collection)->hashValue;
+		((PblHashSet*)set)->hashValue = ((PblHashSet*)collection)->hashValue;
 	}
 
 	if (pblSetAddAll(set, collection) < 0)
@@ -410,11 +373,11 @@ const void* element /** The element to get the hash value for             */
  * <BR>PBL_ERROR_PARAM_COLLECTION        - The collection cannot be iterated.
  * <BR>PBL_ERROR_CONCURRENT_MODIFICATION - The collection was modified concurrently.
  */
-PblList * pblCollectionConvertToLinkedList( /*           */
-PblCollection * collection /** The collection to convert */
+PblList* pblCollectionConvertToLinkedList( /*               */
+	PblCollection* collection /** The collection to convert */
 )
 {
-	PblList * list = pblListNewLinkedList();
+	PblList* list = pblListNewLinkedList();
 	if (!list)
 	{
 		return NULL;
@@ -447,11 +410,11 @@ PblCollection * collection /** The collection to convert */
  * <BR>PBL_ERROR_PARAM_COLLECTION        - The collection cannot be iterated.
  * <BR>PBL_ERROR_CONCURRENT_MODIFICATION - The collection was modified concurrently.
  */
-PblSet * pblCollectionConvertToTreeSet( /*               */
-PblCollection * collection /** The collection to convert */
+PblSet* pblCollectionConvertToTreeSet( /*                   */
+	PblCollection* collection /** The collection to convert */
 )
 {
-	PblSet * set = pblSetNewTreeSet();
+	PblSet* set = pblSetNewTreeSet();
 	if (!set)
 	{
 		return NULL;
@@ -491,23 +454,23 @@ PblCollection * collection /** The collection to convert */
  * <BR>PBL_ERROR_PARAM_COLLECTION        - The collection cannot be iterated.
  * <BR>PBL_ERROR_CONCURRENT_MODIFICATION - The collection was modified concurrently.
  */
-int pblCollectionAggregate( /*                                                     */
-PblCollection * collection, /** The collection to aggregate                        */
-void * context, /** The application context to pass to the aggregation function    */
-int (*aggregation) /** The aggregation function called on every collection element */
-( /*                                                                               */
-void * context, /** The application context passed                                 */
-int index, /** The index of the element passed                                     */
-void * element /** The collection element to aggregate                             */
-) /*                                                                               */
+int pblCollectionAggregate( /*                                                         */
+	PblCollection* collection, /** The collection to aggregate                         */
+	void* context, /** The application context to pass to the aggregation function     */
+	int (*aggregation) /** The aggregation function called on every collection element */
+	( /*                                                                               */
+		void* context, /** The application context passed                              */
+		int index, /** The index of the element passed                                 */
+		void* element /** The collection element to aggregate                          */
+		) /*                                                                           */
 )
 {
 	PblIterator iteratorBuffer;
-	PblIterator * iterator = (PblIterator *) &iteratorBuffer;
+	PblIterator* iterator = (PblIterator*)&iteratorBuffer;
 	int rc = 0;
 	int hasNext;
 	int index = 0;
-	void * element;
+	void* element;
 
 	/*
 	 * Get the iterator for this collection
@@ -520,7 +483,7 @@ void * element /** The collection element to aggregate                          
 	while ((hasNext = pblIteratorHasNext(iterator)) > 0)
 	{
 		element = pblIteratorNext(iterator);
-		if (element == (void*) -1)
+		if (element == (void*)-1)
 		{
 			// Concurrent modification
 			//

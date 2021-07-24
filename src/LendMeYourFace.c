@@ -185,8 +185,11 @@ static int hasFilesInDirectory(char* path, char* pattern, char** extensions)
 	}
 	do
 	{
+#ifdef _WIN32
+#pragma warning(disable: 4996)
+#endif
 		char buffer[1024];
-		sprintf(buffer, "%ws", findFileData.cFileName);
+		snprintf(buffer, sizeof(buffer) - 1, "%ws", findFileData.cFileName);
 
 		if (nameMatches(buffer, pattern, extensions))
 		{
@@ -245,8 +248,11 @@ static PblList* listFilesInDirectory(char* path, char* pattern, char** extension
 	}
 	do
 	{
+#ifdef _WIN32
+#pragma warning(disable: 4996)
+#endif
 		char buffer[1024];
-		sprintf(buffer, "%ws", findFileData.cFileName);
+		snprintf(buffer, sizeof(buffer) - 1, "%ws", findFileData.cFileName);
 
 		if (nameMatches(buffer, pattern, extensions))
 		{
@@ -337,7 +343,7 @@ static char* nextPublicVideoUrl()
 			continue;
 		}
 		pblCgiSetValue("lastVideo", video);
-	    url = pblCgiStrCat(getRequiredConfigValue("PublicVideosUrl"), video);
+		url = pblCgiStrCat(getRequiredConfigValue("PublicVideosUrl"), video);
 		break;
 	}
 	PBL_CGI_TRACE("<<<< %s: Url '%s'", tag, url);
@@ -897,6 +903,166 @@ static int uploadImage()
 	return 0;
 }
 
+static int uploadImageFromApp()
+{
+	char* tag = "UploadImageFromApp";
+	PBL_CGI_TRACE(">>> %s", tag);
+	//checkRequiredCookie(tag);
+
+	char* boundary = NULL;
+	char* ptr = pblCgiGetEnv("CONTENT_TYPE");
+	if (ptr && *ptr)
+	{
+		char* values[2 + 1];
+		char* keyValuePair[2 + 1];
+
+		int n = pblCgiStrSplit(ptr, " ", 2, values);
+		if (n > 1)
+		{
+			if (pblCgiStrEquals("multipart/form-data;", values[0]))
+			{
+				pblCgiStrSplit(values[1], "=", 2, keyValuePair);
+				if (pblCgiStrEquals("boundary", keyValuePair[0]))
+				{
+					boundary = keyValuePair[1];
+				}
+			}
+		}
+	}
+
+	if (boundary && *boundary == '"')
+	{
+		boundary += 1;
+		int length = strlen(boundary);
+		if (length > 1 && boundary[length - 1] == '"')
+		{
+			boundary[length - 1] = '\0';
+		}
+	}
+	if (!boundary || !*boundary)
+	{
+		pblCgiExitOnError("%s: No multipart/form-data boundary defined\n", tag);
+		return -1;
+	}
+
+	ptr = pblCgiPostData;
+	if (!ptr || !*ptr)
+	{
+		pblCgiExitOnError("%s: No POST data defined\n", tag, boundary);
+		return -1;
+	}
+
+	char* found = strstr(ptr, boundary);
+	if (!found || !*found)
+	{
+		pblCgiExitOnError("%s: No multipart/form-data boundary '%s' found in post data '%s'\n", tag, boundary, ptr);
+		return -1;
+	}
+
+	char* contentTypeTag = "Content-Type: ";
+	char* contentType = strstr(pblCgiPostData, contentTypeTag);
+	if (!contentType || !*contentType)
+	{
+		pblCgiExitOnError("%s: No Content-Type tag '%s' defined in post data %s\n", tag, contentTypeTag, pblCgiPostData);
+		return -1;
+	}
+	contentType = contentType + strlen(contentTypeTag);
+	if (!contentType || !*contentType)
+	{
+		pblCgiExitOnError("%s: No Content-Type value defined in post data %s\n", tag, pblCgiPostData);
+		return -1;
+	}
+	ptr = contentType;
+	while (!isspace(*ptr++));
+	contentType = pblCgiStrRangeDup(contentType, ptr);
+	if (!contentType || !*contentType)
+	{
+		pblCgiExitOnError("%s: No Content-Type value found in post data %s\n", tag, pblCgiPostData);
+		return -1;
+	}
+
+	char* end = strstr(pblCgiPostData, "\r\n\r\n");
+	if (!end)
+	{
+		end = strstr(ptr, "\n\n");
+		if (!end)
+		{
+			pblCgiExitOnError("%s: Illegal header, terminating newlines are missing: '%s'\n", tag, ptr);
+			return -1;
+		}
+		else
+		{
+			end += 2;
+		}
+	}
+	else
+	{
+		end += 4;
+	}
+	ptr = end;
+	int length = pblCgiContentLength - (ptr - pblCgiPostData) - strlen(boundary) - 6;
+	PBL_CGI_TRACE(">>> %s length %d", tag, length);
+
+	char* extension = NULL;
+	if (pblCgiStrEquals("image/png", contentType))
+	{
+		extension = "png";
+	}
+	else if (pblCgiStrEquals("image/jpeg", contentType))
+	{
+		extension = "jpg";
+	}
+	else
+	{
+		printTemplate("startUpload.html", "text/html");
+		return 0;
+	}
+
+	PBL_CGI_TRACE(">>> %s extension %s", tag, extension);
+
+	time_t now = time(NULL);
+	char* timeString = pblCgiStrFromTimeAndFormat(now, "%02d%02d%02d%02d%02d%02d");
+
+	char* uploadFileName = pblCgiSprintf("%s.%s", timeString, extension);
+	PBL_CGI_TRACE(">>> %s uploadFileName %s", tag, uploadFileName);
+
+	// UploadedPicturesFromAppPath /www/mission-base.com/html/tamiko/lendmeyourface/appAccess/uploadedPictures/
+	char* uploadFilePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("UploadedPicturesFromAppPath"), uploadFileName);
+	PBL_CGI_TRACE(">>> %s uploadFilePath %s", tag, uploadFilePath);
+
+	FILE* stream;
+	if (!(stream = pblCgiFopen(uploadFilePath, "w")))
+	{
+		pblCgiExitOnError("%s: Failed to open file '%s'", tag, uploadFilePath);
+		return -1;
+	}
+
+	PBL_CGI_TRACE(">>> %s length %d", tag, length);
+	end = ptr + length;
+	while (ptr < end)
+	{
+		fputc(*ptr++, stream);
+	}
+	fclose(stream);
+
+	PBL_CGI_TRACE(">>> %s length %d", tag, length);
+
+	//char* imageFileName = pblCgiSprintf("%s%s", timeString, cookie + timeStringLength);
+	//char* imageName = pblCgiSprintf("%s.png", imageFileName);
+	//char* imagePath = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesPath"), imageName);
+	//char* imageUrl = pblCgiSprintf("%s/%s", getRequiredConfigValue("ConvertedPicturesUrl"), imageName);
+
+	//convertFile(uploadFilePath, imagePath);
+
+	//pblCgiSetValue("imageFileName", imageFileName);
+	//pblCgiSetValue("imageName", imageName);
+	//pblCgiSetValue("imageUrl", imageUrl);
+	printTemplate("confirmUpload.html", "text/html");
+
+	PBL_CGI_TRACE("<<< %s: Image '%s', length %d", tag, uploadFilePath, length);
+	return 0;
+}
+
 static int isUploadPossible()
 {
 	char* tag = "IsUploadPossible";
@@ -997,6 +1163,16 @@ static int lendMeYourFace(int argc, char* argv[])
 	}
 #endif
 
+	char* action = pblCgiQueryValue("action");
+	PBL_CGI_TRACE(">> %s: action='%s'", tag, action ? action : "NULL");
+
+	if (pblCgiStrEquals("uploadImageFromApp", action))
+	{
+		rc = uploadImageFromApp();
+		PBL_CGI_TRACE("<< %s: rc %d", tag, rc);
+		return rc;
+	}
+
 	cookie = pblCgiGetCoockie(pblCgiCookieKey, pblCgiCookieTag);
 	if (cookie && (cookieLength = strlen(cookie)) == expectedCookieLength)
 	{
@@ -1009,7 +1185,6 @@ static int lendMeYourFace(int argc, char* argv[])
 		pblCgiSetValue("lastVideo", lastVideo);
 	}
 
-	char* action = pblCgiQueryValue("action");
 	if (!action || !*action)
 	{
 		rc = nextPublicVideo(); // There is no specific action, default to the next public video
@@ -1041,6 +1216,10 @@ static int lendMeYourFace(int argc, char* argv[])
 	else if (pblCgiStrEquals("uploadImage", action))
 	{
 		rc = uploadImage();
+	}
+	else if (pblCgiStrEquals("uploadImageFromApp", action))
+	{
+		rc = uploadImageFromApp();
 	}
 	else if (pblCgiStrEquals("rotateImage", action))
 	{

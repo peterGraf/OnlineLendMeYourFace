@@ -26,6 +26,9 @@
  please see: http://www.mission-base.com/.
 
 $Log: pblCgi.h,v $
+Revision 1.34  2021/06/12 11:18:27  peter
+Synchronizing with github version
+
  */
 
 #ifdef __cplusplus

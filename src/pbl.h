@@ -26,6 +26,9 @@
    please see: http://www.mission-base.com/.
 
     $Log: pbl.h,v $
+    Revision 1.75  2021/06/12 11:18:26  peter
+    Synchronizing with github version
+
 */
 
 #ifdef __cplusplus
@@ -232,34 +235,11 @@ extern "C" {
 /* macros                                                                    */
 /*****************************************************************************/
 
-/*
- * The PBL_MEMTRACE define can be used for debugging the library,
- * if defined the library will log a line for all memory chunks
- * that are allocated for more than 3 minutes into the file ./pblmemtrace.log
- *
- * This can be used to detect heap memory lost by the code.
- * See also function pbl_memtrace_out in pbl.c
- */
-
-/* #define PBL_MEMTRACE   */
-#ifdef  PBL_MEMTRACE
-
-extern void pbl_memtrace_init( void );
-extern void pbl_memtrace_delete( void * data );
-extern void pbl_memtrace_out( int checktime );
-
-#define PBL_FREE( ptr ) if( ptr ){ pbl_memtrace_init(); pbl_memtrace_delete( ptr );\
-                                   free( ptr ); ptr = 0; }
-
-#else
-
 /**
  * Make free save against NULL pointers,
  * @doc also the parameter ptr is set to NULL
  */
 #define PBL_FREE( ptr ) if( ptr ){ free( ptr ); ptr = 0; }
-
-#endif
 
 /**
  * Macros for linear list handling,
