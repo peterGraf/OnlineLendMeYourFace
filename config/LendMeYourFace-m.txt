@@ -1,0 +1,33 @@
+## LendMeYourFace-m.txt - Configuration file for LendMeYourFace service - museum version
+#
+
+NumberOfOutputVideos        9
+MaxPictureQueueLength       15
+EstimatedMinutesForRender   1
+
+## Traces are only written if the file exists, the file needs to be writable by the cgi program
+#
+TraceFilePath               /LendMeYourFace/LendMeYourFace-m.txt
+
+## Directory paths
+#
+TemplateDirectoryPath       /www/mission-base.com/templates/LendMeYourFace-m/
+
+PauseFilePath               /www/mission-base.com/html/tamiko/lendmeyourface/online-m/PAUSE-m
+
+PublicVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online-m/publicVideos/
+PublicVideosUrl             /lendmeyourface/online-m/publicVideos/
+
+UploadedPicturesPath        /www/mission-base.com/html/tamiko/lendmeyourface/online-m/uploadedPictures/
+
+HandledPicturesPath         /www/mission-base.com/html/tamiko/lendmeyourface/online-m/handledPictures/
+ConvertedPicturesPath       /www/mission-base.com/html/tamiko/lendmeyourface/online-m/convertedPictures/
+ConvertedPicturesUrl        /lendmeyourface/online-m/convertedPictures/
+
+InputPicturesPath           /www/mission-base.com/html/tamiko/lendmeyourface/online-m/inputPictures/
+
+OutputVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online-m/outputVideos/
+OutputVideosUrl             /lendmeyourface/online-m/outputVideos/
+
+SecretNameDefault           111111111111111111111111
+

@@ -10,21 +10,11 @@
 </head>
 <body>
 
-  <!--#INCLUDE navigation-mobil.html-->
-
   <div class="background">
     <div class="content">
 
-      <!--#INCLUDE navigation-desktop.html-->
-      <!--#INCLUDE navigation-lendmeyourface.html-->
-      <!--#INCLUDE header.html-->
-      
-      
-      
-      
-
-      <h2>"Choose a file" (also to take selfie) then "Upload image"</h2>
-      Image in landscape format with your face in the middle.
+      <h2>"CHOOSE IMAGE" - Take selfie - Then "Upload image"</h2>
+      <strong>Face in the middle</strong>
       <br />
       <br />
 
@@ -36,14 +26,14 @@
       </div>
 
       <div class="right-container">
-        <strong>The image will be cropped to a square:</strong>
+        <strong>Image will be cropped to a square:</strong>
         <br />
         <br />
         <img src="/lendmeyourface/online/Images/IdealPhoto512sq.png" width="100%" />
       </div>
 
       <div class="right-container-mobil">
-        <strong>The image will be cropped to a square:</strong>
+        <strong>Image will be cropped to a square:</strong>
         <br />
         <br />
         <img
@@ -51,13 +41,11 @@
           width="100%" />
       </div>
 
-
-
       <div class="line2"></div>
 
       <div class="button-wrapper-large">
         <form enctype="multipart/form-data"
-          action="/cgi-bin/LendMeYourFace.cgi?action=uploadImage" method="post" />
+          action="/cgi-bin/LendMeYourFace-m.cgi?action=uploadImage" method="post" />
         <input type="file" name="file" id="file" class="inputfile" />
         <label id="label1" for="file">Choose image ...</label>
         <label id="label2">No image selected</label>
@@ -68,13 +56,15 @@
         <input type="submit" value="Upload Image" />
       </button>
       </form>
-
-      <button onclick="document.getElementById('backToVideosForm').submit()" type="button">
-        <img src="/lendmeyourface/online/Icons/back-to-video.svg" alt="Back to Videos" />
-        <div class="button-text2">Back to Videos</div>
+      
+      <button onclick="document.getElementById('cancelForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/no.svg" alt="Cancel Upload" />
+        <div class="button-text2">Cancel Upload</div>
       </button>
 
-      <form id="backToVideosForm" action="/cgi-bin/LendMeYourFace.cgi" method="post"></form>
+      <form id="cancelForm" action="/cgi-bin/LendMeYourFace-m.cgi" method="post">
+        <input type="hidden" name="action" value="startUpload" />
+      </form>
 
       <script>
 							var label = document.getElementById("label2");
@@ -101,11 +91,6 @@
       <div class="zusatz-text">
         <strong>You will be able to review the image before it is used.</strong>
       </div>
-
-      <div class="line3"></div>
-      <!--#INCLUDE footer.html-->
-    </div>
   </div>
- 
 </body>
 </html>

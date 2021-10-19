@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+</head>
+<body style="background-color:black;">
+
+  
+  <div class="background">
+    <div class="content">
+
+      <p>
+        <video poster="/lendmeyourface/online-hk/posterBlack.jpg" onclick="playVideo()" id="video1" style="cursor:pointer" autoplay >
+        <source src="<?Video1>" type="video/mp4" /></video>
+      </p>
+
+      <form id="nextPrivateVideoForm" action="/cgi-bin/LendMeYourFace-hk.cgi" method="post">
+        <input type="hidden" name="lastVideo" value="<?lastVideo>" />
+        <input type="hidden" name="action" value="privateVideo" />
+      </form>
+
+      <script>
+							var video1 = document.getElementById("video1");
+							var doShowNextVideo = true;
+
+							function playVideo() {
+								video1.play();
+								doShowNextVideo = false;
+							}
+
+							function pauseVideo() {
+								video1.pause();
+								doShowNextVideo = true;
+								setTimeout(function() {
+									submitNextPrivateVideo()
+								}, 15000);
+							}
+
+							function submitNextPrivateVideo() {
+								if (doShowNextVideo || video1.ended
+										|| video1.paused) {
+									document.getElementById(
+											"nextPrivateVideoForm").submit();
+								} else {
+									setTimeout(function() {
+										submitNextPrivateVideo()
+									}, 5000);
+								}
+							}
+
+							video1.oncanplaythrough = function() {
+								video1.play();
+							};
+
+							video1.onended = function() {
+								submitNextPrivateVideo();
+							};
+
+							setTimeout(function() {
+								submitNextPrivateVideo()
+							}, 60000);
+			</script>
+      
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
+
+  <div class="background">
+    <div class="content">
+
+      <h2>"CHOOSE IMAGE" - Take selfie - Then "Upload image"</h2>
+      <strong>Face in the middle</strong>
+      <br />
+      <br />
+
+      <div class="left-container">
+        <strong>MOUTH <em>OPEN - DON'T</em> SMILE!</strong>
+        <br />
+        <br />
+        <img src="/lendmeyourface/online/Images/IdealPhoto_910x512.jpg" width="100%" />
+      </div>
+
+      <div class="right-container">
+        <strong>Image will be cropped to a square:</strong>
+        <br />
+        <br />
+        <img src="/lendmeyourface/online/Images/IdealPhoto512sq.png" width="100%" />
+      </div>
+
+      <div class="right-container-mobil">
+        <strong>Image will be cropped to a square:</strong>
+        <br />
+        <br />
+        <img
+          src="/lendmeyourface/online/Images/IdealPhoto_910x512-2.jpg"
+          width="100%" />
+      </div>
+
+      <div class="line2"></div>
+
+      <div class="button-wrapper-large">
+        <form enctype="multipart/form-data"
+          action="/cgi-bin/LendMeYourFace-hk.cgi?action=uploadImage" method="post" />
+        <input type="file" name="file" id="file" class="inputfile" />
+        <label id="label1" for="file">Choose image ...</label>
+        <label id="label2">No image selected</label>
+      </div>
+
+      <button class="button">
+        <img src="/lendmeyourface/online/Icons/upload-grau.svg" alt="upload" />
+        <input type="submit" value="Upload Image" />
+      </button>
+      </form>
+      
+      <button onclick="document.getElementById('cancelForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/no.svg" alt="Cancel Upload" />
+        <div class="button-text2">Cancel Upload</div>
+      </button>
+
+      <form id="cancelForm" action="/cgi-bin/LendMeYourFace-hk.cgi" method="post">
+        <input type="hidden" name="action" value="startUpload" />
+      </form>
+
+      <script>
+							var label = document.getElementById("label2");
+							var labelVal = label.innerHTML;
+							var input = document.getElementById("file");
+
+							input
+									.addEventListener(
+											'change',
+											function(e) {
+												var fileName = '';
+												if (this.files
+														&& this.files.length > 0)
+													fileName = e.target.value
+															.split('\\').pop();
+
+												if (fileName)
+													label.innerHTML = fileName;
+												else
+													label.innerHTML = labelVal;
+											});
+						</script>
+      <br />
+      <div class="zusatz-text">
+        <strong>You will be able to review the image before it is used.</strong>
+      </div>
+  </div>
+</body>
+</html>

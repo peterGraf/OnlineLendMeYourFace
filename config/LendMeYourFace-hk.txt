@@ -1,0 +1,33 @@
+## LendMeYourFace-hk.txt - Configuration file for LendMeYourFace service - Hong Kong version
+#
+
+NumberOfOutputVideos        10
+MaxPictureQueueLength       50
+EstimatedMinutesForRender   1
+
+## Traces are only written if the file exists, the file needs to be writable by the cgi program
+#
+TraceFilePath               /LendMeYourFace/LendMeYourFace-hk.txt
+
+## Directory paths
+#
+TemplateDirectoryPath       /www/mission-base.com/templates/LendMeYourFace-hk/
+
+PauseFilePath               /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/PAUSE-hk
+
+PublicVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/publicVideos/
+PublicVideosUrl             /lendmeyourface/online-hk/publicVideos/
+
+UploadedPicturesPath        /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/uploadedPictures/
+
+HandledPicturesPath         /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/handledPictures/
+ConvertedPicturesPath       /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/convertedPictures/
+ConvertedPicturesUrl        /lendmeyourface/online-hk/convertedPictures/
+
+InputPicturesPath           /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/inputPictures/
+
+OutputVideosPath            /www/mission-base.com/html/tamiko/lendmeyourface/online-hk/outputVideos/
+OutputVideosUrl             /lendmeyourface/online-hk/outputVideos/
+
+SecretNameDefault           111111111111111111111111
+

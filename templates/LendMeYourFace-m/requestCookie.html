@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/online/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+
+<body>
+
+  <div class="background">
+    <div class="content">
+
+
+      <h2>Go Fake Yourself! needs to set a cookie</h2>
+      The cookie will only be used inside of Go Fake Yourself! on this website. All your data, photos and videos are private and anonymous. They exist only on the Go Fake Yourself! website.
+      <br />
+      <br />
+      <strong>Do you want to allow this?</strong>
+      <br />
+      <br />
+
+      <div class="line2"></div>
+
+      <form id="YesForm" action="/cgi-bin/LendMeYourFace-m.cgi"
+        method="post">
+        <input type="hidden" name="action" value="setCookie" />
+      </form>
+
+      <form id="NoForm" action="/cgi-bin/LendMeYourFace-m.cgi"
+        method="post">
+        <input type="hidden" name="lastVideo" value="<?lastVideo>" />
+      </form>
+
+      <button onclick="document.getElementById('YesForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/yes.svg" alt="Yes" />
+        <div class="button-text2">Yes</div>
+      </button>
+
+      <button onclick="document.getElementById('NoForm').submit()" type="button">
+        <img src="/lendmeyourface/online/Icons/no.svg" alt="No" />
+        <div class="button-text2">No</div>
+      </button>
+
+    </div>
+  </div>
+ 
+</body>
+</html>
