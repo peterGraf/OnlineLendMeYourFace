@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Copyright (C) 2020, Tamiko Thiel and /p, all rights reserved! -->
+<meta charset="utf-8" />
+<title>Lend Me Your Face!</title>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+<link href="/lendmeyourface/onlineStyles.css" rel="stylesheet" type="text/css" />
+<style type="text/css"></style>
+</head>
+<body>
+
+  <div class="background">
+    <div class="content">
+
+      <h2>Do you want to use this image?</h2>
+
+      <p class="image-normal">
+        <img src="<?imageUrl>" height="512" width="512" />
+      </p>
+
+      <div class="line2"></div>
+
+      <form id="useImageForm" action="/cgi-bin/LendMeYourFace-nnn.cgi" method="post">
+        <input type="hidden" name="imageFileName" value="<?imageFileName>" />
+        <input type="hidden" name="action" value="useImage" />
+      </form>
+
+      <form id="rotateImageForm" action="/cgi-bin/LendMeYourFace-nnn.cgi" method="post">
+        <input type="hidden" name="imageFileName" value="<?imageFileName>" />
+        <input type="hidden" name="action" value="rotateImage" />
+      </form>
+
+      <form id="deleteImageForm" action="/cgi-bin/LendMeYourFace-nnn.cgi" method="post">
+        <input type="hidden" name="imageFileName" value="<?imageFileName>" />
+        <input type="hidden" name="action" value="deleteImage" />
+      </form>
+      
+      <button onclick="document.getElementById('deleteImageForm').submit()" type="button">
+        <img src="/lendmeyourface/Icons/other-image.svg" alt="Replace Image" />
+        <div class="button-text2">Replace Image</div>
+      </button>
+
+      <button onclick="document.getElementById('rotateImageForm').submit()" type="button">
+        <img src="/lendmeyourface/Icons/rotate.svg" alt="Rotate Image" />
+        <div class="button-text2">Rotate Image</div>
+      </button>
+
+      <button onclick="document.getElementById('useImageForm').submit()" type="button">
+        <img src="/lendmeyourface/Icons/yes.svg" alt="Use Image" />
+        <div class="button-text2">Use Image</div>
+      </button>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+## LendMeYourFace-hk.txt - Configuration file for LendMeYourFace service - Hong Kong version
+#
+
+NumberOfOutputVideos        10
+MaxPictureQueueLength       50
+EstimatedMinutesForRender   1
+
+## Traces are only written if the file exists, the file needs to be writable by the cgi program
+#
+TraceFilePath               /var/www/log/LendMeYourFace-nnn.txt
+
+## Directory paths
+#
+TemplateDirectoryPath       /var/www/templates/LendMeYourFace-nnn/
+
+PauseFilePath               /var/www/html/lendmeyourface/online-nnn/NNN_PAUSE
+
+PublicVideosPath            /var/www/html/lendmeyourface/online-nnn/publicVideos/
+PublicVideosUrl             /lendmeyourface/online-nnn/publicVideos/
+
+UploadedPicturesPath        /var/www/html/lendmeyourface/online-nnn/uploadedPictures/
+
+HandledPicturesPath         /var/www/html/lendmeyourface/online-nnn/handledPictures/
+ConvertedPicturesPath       /var/www/html/lendmeyourface/online-nnn/convertedPictures/
+ConvertedPicturesUrl        /lendmeyourface/online-nnn/convertedPictures/
+
+InputPicturesPath           /var/www/html/lendmeyourface/online-nnn/inputPictures/
+
+OutputVideosPath            /var/www/html/lendmeyourface/online-nnn/outputVideos/
+OutputVideosUrl             /lendmeyourface/online-nnn/outputVideos/
+
+SecretNameDefault           1d4759f43146c4e7351b85a1
+

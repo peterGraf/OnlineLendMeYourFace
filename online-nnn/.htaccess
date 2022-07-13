@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName " A password is required for this folder."
+AuthUserFile /www/mission-base.com/.htpasswd
+require valid-user
